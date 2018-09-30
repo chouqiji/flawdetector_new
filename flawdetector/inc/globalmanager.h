@@ -6,12 +6,15 @@
 class GlobalManager : public QObject
 {
     Q_OBJECT
+private:
+    static GlobalManager m_instance;
+    GlobalManager();
+    ~GlobalManager();
+    GlobalManager(const GlobalManager&) = delete;
+    GlobalManager& operator=(const GlobalManager&) = delete;
+
 public:
-    explicit GlobalManager(QObject *parent = nullptr);
-
-signals:
-
-public slots:
+    static GlobalManager* instance();
 };
 
 #endif // GLOBALMANAGER_H

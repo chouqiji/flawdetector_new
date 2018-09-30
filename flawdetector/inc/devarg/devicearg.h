@@ -15,8 +15,8 @@ enum class CommitPolicy
 class IDeviceArgQtBase : public QObject
 {
     Q_OBJECT
-public slots:
-    virtual void commit(CommitPolicy policy) = 0;
+protected:
+    IDeviceArgQtBase(QObject *parent = nullptr) : QObject{parent} {}
 
 signals:
     void updated();
@@ -26,26 +26,15 @@ template <typename T>
 class IDeviceArg : public IDeviceArgQtBase
 {
 public:
-    virtual T getValue() = 0;
-    // for number types, getRange() returns a list of size 2
-    // for string types, getRange() should return list of strings
-    virtual QList<T> getRange() = 0;
-    virtual QString getArgName() = 0;
-    virtual QString getUnit() = 0;
+    IDeviceArg(QObject *parent = nullptr) : IDeviceArgQtBase{parent} {}
+    virtual T value() const = 0;
+    virtual void setValue(const T& val) = 0;
+    virtual QList<T> range() const = 0;
+    virtual QString argName() const = 0;
+    virtual QString unit() const = 0;
+    virtual void commit(CommitPolicy policy) = 0;
 };
 
 } // namespace
-class implDeviceArg;
-
-template <typename T>
-class DeviceArg : public IDeviceArgs<T>
-{
-public:
-    DeviceArg(QObject* parent);
-private:
-    QScopedPointer<implDeviceArg> pImpl;
-};
-
-using DeviceArgsString = DeviceArg<QString>;
 
 #endif // DEVICEARG_H

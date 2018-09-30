@@ -29,9 +29,12 @@ SOURCES += \
         src/main.cpp \
         src/desktop.cpp \
     src/globalmanager.cpp \
-    src/devarg/devicearg.cpp
+    src/devarg/impl.cpp
 
 HEADERS += \
         inc/desktop.h \
     inc/globalmanager.h \
-    inc/devarg/devicearg.h
+    inc/devarg/devicearg.h \
+    inc/devarg/impl.h
+
+CONFIG += c++14
