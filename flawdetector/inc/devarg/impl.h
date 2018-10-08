@@ -2,7 +2,6 @@
 #define DEVICEARG_IMPL_H
 
 #include "devarg/devicearg.h"
-#include <memory>
 
 namespace DeviceArg
 {
@@ -31,14 +30,6 @@ private:
 template class ConcreteDeviceArg<QString>;
 template class ConcreteDeviceArg<int>;
 template class ConcreteDeviceArg<float>;
-
-template <typename T>
-QSharedPointer<IDeviceArg<T>> makeArg(T value)
-{
-    QSharedPointer<IDeviceArg<T>> ret = QSharedPointer<IDeviceArg<T>>(new ConcreteDeviceArg<T>);
-    ret->setValue(value);
-    return ret;
-}
 
 }
 

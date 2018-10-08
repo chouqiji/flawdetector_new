@@ -2,6 +2,7 @@
 #define DEVICEARG_H
 
 #include <QObject>
+#include <QSharedPointer>
 
 namespace DeviceArg
 {
@@ -34,6 +35,20 @@ public:
     virtual QString unit() const = 0;
     virtual void commit(CommitPolicy policy) = 0;
 };
+
+QSharedPointer<IDeviceArg<int>> makeIntArg(int value);
+QSharedPointer<IDeviceArg<float>> makeFloatArg(float value);
+QSharedPointer<IDeviceArg<QString>> makeQStringArg(QString value);
+
+template <typename T>
+QSharedPointer<IDeviceArg<T>> makeArg(T)
+{
+    return QSharedPointer<IDeviceArg<T>>{}; //nullptr
+}
+
+template<> QSharedPointer<IDeviceArg<int>> makeArg(int value);
+template<> QSharedPointer<IDeviceArg<float>> makeArg(float value);
+template<> QSharedPointer<IDeviceArg<QString>> makeArg(QString value);
 
 } // namespace
 

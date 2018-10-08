@@ -23,7 +23,7 @@ template class implDeviceArg<float>;
 
 template<typename T>
 ConcreteDeviceArg<T>::ConcreteDeviceArg(QObject *parent)
-    : IDeviceArg<T>{parent}, pImpl(new implDeviceArg<T>{this})
+    : IDeviceArg<T>{parent}, pImpl{new implDeviceArg<T>{this}}
 {
 }
 
@@ -67,4 +67,43 @@ template<typename T>
 void ConcreteDeviceArg<T>::commit(CommitPolicy policy)
 {
     Q_UNUSED(policy);
+}
+
+QSharedPointer<IDeviceArg<int>> DeviceArg::makeIntArg(int value)
+{
+    auto ret = QSharedPointer<IDeviceArg<int>>{new ConcreteDeviceArg<int>{nullptr}};
+    ret->setValue(value);
+    return ret;
+}
+
+QSharedPointer<IDeviceArg<float>> DeviceArg::makeFloatArg(float value)
+{
+    auto ret = QSharedPointer<IDeviceArg<float>>{new ConcreteDeviceArg<float>{nullptr}};
+    ret->setValue(value);
+    return ret;
+}
+
+QSharedPointer<IDeviceArg<QString>> DeviceArg::makeQStringArg(QString value)
+{
+    auto ret = QSharedPointer<IDeviceArg<QString>>{new ConcreteDeviceArg<QString>{nullptr}};
+    ret->setValue(value);
+    return ret;
+}
+
+template<>
+QSharedPointer<IDeviceArg<int>> DeviceArg::makeArg(int value)
+{
+    return makeIntArg(value);
+}
+
+template<>
+QSharedPointer<IDeviceArg<float>> DeviceArg::makeArg(float value)
+{
+    return makeFloatArg(value);
+}
+
+template<>
+QSharedPointer<IDeviceArg<QString>> DeviceArg::makeArg(QString value)
+{
+    return makeQStringArg(value);
 }
