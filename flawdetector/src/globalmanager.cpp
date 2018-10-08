@@ -1,5 +1,5 @@
 #include "globalmanager.h"
-#include "devarg/devicearg.h"
+#include "devicearg.h"
 #include <QDebug>
 
 GlobalManager GlobalManager::m_instance;

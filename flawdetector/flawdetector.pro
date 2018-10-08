@@ -34,7 +34,7 @@ SOURCES += \
 HEADERS += \
         inc/desktop.h \
     inc/globalmanager.h \
-    inc/devarg/devicearg.h \
-    inc/devarg/impl.h
+    inc/devicearg.h \
+    inc/private/devicearg_impl.h
 
 CONFIG += c++14

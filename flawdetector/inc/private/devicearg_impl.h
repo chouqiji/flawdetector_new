@@ -1,7 +1,7 @@
 #ifndef DEVICEARG_IMPL_H
 #define DEVICEARG_IMPL_H
 
-#include "devarg/devicearg.h"
+#include "devicearg.h"
 
 namespace DeviceArg
 {
