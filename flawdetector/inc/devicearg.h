@@ -33,22 +33,23 @@ public:
     virtual QList<T> range() const = 0;
     virtual QString argName() const = 0;
     virtual QString unit() const = 0;
-    virtual void commit(CommitPolicy policy) = 0;
+    virtual CommitPolicy commitPolicy() const = 0;
+    // slot
+    virtual void commit() = 0;
 };
 
-QSharedPointer<IDeviceArg<int>> makeIntArg(int value);
-QSharedPointer<IDeviceArg<float>> makeFloatArg(float value);
-QSharedPointer<IDeviceArg<QString>> makeQStringArg(QString value);
+template <typename T>
+struct DeviceArgInitList
+{
+    QString argName;
+    T value;
+    QList<T> range;
+    QString unit;
+    CommitPolicy policy;
+};
 
 template <typename T>
-QSharedPointer<IDeviceArg<T>> makeArg(T)
-{
-    return QSharedPointer<IDeviceArg<T>>{}; //nullptr
-}
-
-template<> QSharedPointer<IDeviceArg<int>> makeArg(int value);
-template<> QSharedPointer<IDeviceArg<float>> makeArg(float value);
-template<> QSharedPointer<IDeviceArg<QString>> makeArg(QString value);
+QSharedPointer<IDeviceArg<T>> makeArg(struct DeviceArgInitList<T>&&);
 
 } // namespace
 

@@ -14,6 +14,7 @@ class ConcreteDeviceArg : public IDeviceArg<T>
 {
 public:
     ConcreteDeviceArg(QObject* parent = nullptr);
+    ConcreteDeviceArg(QObject* parent = nullptr, DeviceArgInitList<T> &&init = DeviceArgInitList<T>{});
     ~ConcreteDeviceArg();
 
     virtual void setValue(const T &val);
@@ -21,15 +22,12 @@ public:
     virtual QList<T> range() const;
     virtual QString argName() const;
     virtual QString unit() const;
-    virtual void commit(CommitPolicy policy);
+    virtual CommitPolicy commitPolicy() const;
+    virtual void commit();
 
 private:
     implDeviceArg<T> *pImpl;
 };
-
-template class ConcreteDeviceArg<QString>;
-template class ConcreteDeviceArg<int>;
-template class ConcreteDeviceArg<float>;
 
 }
 

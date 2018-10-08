@@ -1,29 +1,38 @@
 #include "private/devicearg_impl.h"
+#include <qDebug>
 
 // decl of impl
 template <typename T>
 class DeviceArg::implDeviceArg
 {
 public:
-    explicit implDeviceArg(ConcreteDeviceArg<T> *pParent) : mPParent{pParent}{}
-    T mValue = T{};
-    QList<T> mRange = QList<T>{};
-    QString mArgName = QString{};
-    QString mUnit = QString{};
-    ~implDeviceArg() {}
+    typedef DeviceArg::DeviceArgInitList<T> DataMember;
+
+    implDeviceArg(ConcreteDeviceArg<T> *pParent) : mPParent{pParent} {}
+
+    implDeviceArg(ConcreteDeviceArg<T> *pParent, DataMember&& member)
+        : mMember{std::forward<DataMember>(member)}, mPParent{pParent} {}
+
+    DataMember mMember;
+
 private:
     ConcreteDeviceArg<T> *mPParent;
 };
 
 using namespace DeviceArg;
 
-template class implDeviceArg<QString>;
-template class implDeviceArg<int>;
-template class implDeviceArg<float>;
-
 template<typename T>
 ConcreteDeviceArg<T>::ConcreteDeviceArg(QObject *parent)
-    : IDeviceArg<T>{parent}, pImpl{new implDeviceArg<T>{this}}
+    : IDeviceArg<T>{parent},
+      pImpl{new implDeviceArg<T>{this}}
+{
+}
+
+template<typename T>
+ConcreteDeviceArg<T>::ConcreteDeviceArg(QObject *parent, DeviceArgInitList<T>&& init)
+    : IDeviceArg<T>{parent},
+      pImpl{new implDeviceArg<T>{ this,
+                                  std::forward<DeviceArgInitList<T> >(init)} }
 {
 }
 
@@ -36,74 +45,63 @@ ConcreteDeviceArg<T>::~ConcreteDeviceArg()
 template<typename T>
 void ConcreteDeviceArg<T>::setValue(const T &val)
 {
-    pImpl->mValue = val;
+    pImpl->mMember.value = val;
 }
 
 template<typename T>
 T ConcreteDeviceArg<T>::value() const
 {
-    return pImpl->mValue;
+    return pImpl->mMember.value;
 }
 
 template<typename T>
 QList<T> ConcreteDeviceArg<T>::range() const
 {
-    return pImpl->mRange;
+    return pImpl->mMember.range;
 }
 
 template<typename T>
 QString ConcreteDeviceArg<T>::argName() const
 {
-    return pImpl->mArgName;
+    return pImpl->mMember.argName;
 }
 
 template<typename T>
 QString ConcreteDeviceArg<T>::unit() const
 {
-    return pImpl->mUnit;
+    return pImpl->mMember.unit;
 }
 
 template<typename T>
-void ConcreteDeviceArg<T>::commit(CommitPolicy policy)
+CommitPolicy ConcreteDeviceArg<T>::commitPolicy() const
 {
-    Q_UNUSED(policy);
+    return pImpl->mMember.policy;
 }
 
-QSharedPointer<IDeviceArg<int>> DeviceArg::makeIntArg(int value)
+template<typename T>
+void ConcreteDeviceArg<T>::commit()
 {
-    auto ret = QSharedPointer<IDeviceArg<int>>{new ConcreteDeviceArg<int>{nullptr}};
-    ret->setValue(value);
-    return ret;
 }
 
-QSharedPointer<IDeviceArg<float>> DeviceArg::makeFloatArg(float value)
+template <typename T>
+QSharedPointer<IDeviceArg<T>> DeviceArg::makeArg(struct DeviceArgInitList<T> &&value)
 {
-    auto ret = QSharedPointer<IDeviceArg<float>>{new ConcreteDeviceArg<float>{nullptr}};
-    ret->setValue(value);
-    return ret;
+    return QSharedPointer<IDeviceArg<T>>
+           { new ConcreteDeviceArg<T>
+                 { nullptr,
+                   std::forward<DeviceArgInitList<T> >(value)}
+           };
 }
 
-QSharedPointer<IDeviceArg<QString>> DeviceArg::makeQStringArg(QString value)
-{
-    auto ret = QSharedPointer<IDeviceArg<QString>>{new ConcreteDeviceArg<QString>{nullptr}};
-    ret->setValue(value);
-    return ret;
-}
+// instantiation
+template class ConcreteDeviceArg<QString>;
+template class ConcreteDeviceArg<int>;
+template class ConcreteDeviceArg<float>;
 
-template<>
-QSharedPointer<IDeviceArg<int>> DeviceArg::makeArg(int value)
-{
-    return makeIntArg(value);
-}
+template class implDeviceArg<QString>;
+template class implDeviceArg<int>;
+template class implDeviceArg<float>;
 
-template<>
-QSharedPointer<IDeviceArg<float>> DeviceArg::makeArg(float value)
-{
-    return makeFloatArg(value);
-}
-
-template<>
-QSharedPointer<IDeviceArg<QString>> DeviceArg::makeArg(QString value)
-{
-    return makeQStringArg(value);
-}
+template QSharedPointer<IDeviceArg<QString>> DeviceArg::makeArg(struct DeviceArgInitList<QString>&&);
+template QSharedPointer<IDeviceArg<int>> DeviceArg::makeArg(struct DeviceArgInitList<int>&&);
+template QSharedPointer<IDeviceArg<float>> DeviceArg::makeArg(struct DeviceArgInitList<float>&&);
