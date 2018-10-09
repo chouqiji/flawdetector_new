@@ -20,16 +20,8 @@ private:
 using namespace DeviceArg;
 
 template<typename T>
-ConcreteDeviceArg<T>::ConcreteDeviceArg(QObject *parent)
-    : IDeviceArg<T>{parent},
-      pImpl{new implDeviceArg<T>{this}}
-{
-}
-
-template<typename T>
-ConcreteDeviceArg<T>::ConcreteDeviceArg(QObject *parent, DeviceArgInitList<T>&& init)
-    : IDeviceArg<T>{parent},
-      pImpl{new implDeviceArg<T>{ this,
+ConcreteDeviceArg<T>::ConcreteDeviceArg(DeviceArgInitList<T>&& init)
+    : pImpl{new implDeviceArg<T>{ this,
                                   std::forward<DeviceArgInitList<T> >(init)} }
 {
 }
@@ -44,7 +36,7 @@ template<typename T>
 void ConcreteDeviceArg<T>::setValue(const T &val)
 {
     pImpl->mMember.value = val;
-    emit IDeviceArg<T>::updated();
+    emit IDeviceArgSignals::updated();
 }
 
 template<typename T>
@@ -60,6 +52,12 @@ QList<T> ConcreteDeviceArg<T>::range() const
 }
 
 template<typename T>
+void ConcreteDeviceArg<T>::setRange(const QList<T> &range)
+{
+    pImpl->mMember.range = range;
+}
+
+template<typename T>
 QString ConcreteDeviceArg<T>::argName() const
 {
     return pImpl->mMember.argName;
@@ -72,6 +70,14 @@ QString ConcreteDeviceArg<T>::unit() const
 }
 
 template<typename T>
+void ConcreteDeviceArg<T>::setUnit(const QString &unit)
+{
+    pImpl->mMember.unit = unit;
+
+    emit IDeviceArgSignals::unitChanged();
+}
+
+template<typename T>
 CommitPolicy ConcreteDeviceArg<T>::commitPolicy() const
 {
     return pImpl->mMember.policy;
@@ -80,17 +86,20 @@ CommitPolicy ConcreteDeviceArg<T>::commitPolicy() const
 template<typename T>
 void ConcreteDeviceArg<T>::commit()
 {
-    pImpl->mMember.callback(value());
+    if(pImpl->mMember.callback != nullptr)
+        pImpl->mMember.callback(value());
+
+    emit IDeviceArgSignals::committed();
 }
 
 template <typename T>
 QSharedPointer<IDeviceArg<T>> DeviceArg::makeArg(struct DeviceArgInitList<T> &&value)
 {
-    return QSharedPointer<IDeviceArg<T>>
-           { new ConcreteDeviceArg<T>
-                 { nullptr,
-                   std::forward<DeviceArgInitList<T> >(value)}
-           };
+    return QSharedPointer<IDeviceArg<T> >{
+        new ConcreteDeviceArg<T>{
+            std::forward<DeviceArgInitList<T> >(value)
+        }
+    };
 }
 
 // instantiation

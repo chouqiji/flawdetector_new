@@ -14,26 +14,32 @@ enum class CommitPolicy
     AfterConfirmed
 };
 
-class IDeviceArgQtBase : public QObject
+class IDeviceArgSignals : public QObject
 {
     Q_OBJECT
 protected:
-    IDeviceArgQtBase(QObject *parent = nullptr) : QObject{parent} {}
+    IDeviceArgSignals() = default;
+    IDeviceArgSignals(const IDeviceArgSignals&) = default;
+    ~IDeviceArgSignals() = default;
+    IDeviceArgSignals& operator=(const IDeviceArgSignals&) = default;
 
 signals:
+    void unitChanged();
     void updated();
+    void committed();
 };
 
 template <typename T>
-class IDeviceArg : public IDeviceArgQtBase
+class IDeviceArg : public IDeviceArgSignals
 {
 public:
-    IDeviceArg(QObject *parent = nullptr) : IDeviceArgQtBase{parent} {}
     virtual T value() const = 0;
-    virtual void setValue(const T& val) = 0;
+    virtual void setValue(const T&) = 0;
     virtual QList<T> range() const = 0;
+    virtual void setRange(const QList<T>&) = 0;
     virtual QString argName() const = 0;
     virtual QString unit() const = 0;
+    virtual void setUnit(const QString&) = 0;
     virtual CommitPolicy commitPolicy() const = 0;
     // slot
     virtual void commit() = 0;
