@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <functional>
 
 namespace DeviceArg
 {
@@ -46,6 +47,7 @@ struct DeviceArgInitList
     QList<T> range;
     QString unit;
     CommitPolicy policy;
+    std::function<void(const T&)> callback;
 };
 
 template <typename T>

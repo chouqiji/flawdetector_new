@@ -1,7 +1,5 @@
 #include "private/devicearg_impl.h"
-#include <qDebug>
 
-// decl of impl
 template <typename T>
 class DeviceArg::implDeviceArg
 {
@@ -46,6 +44,7 @@ template<typename T>
 void ConcreteDeviceArg<T>::setValue(const T &val)
 {
     pImpl->mMember.value = val;
+    emit updated();
 }
 
 template<typename T>
@@ -81,6 +80,7 @@ CommitPolicy ConcreteDeviceArg<T>::commitPolicy() const
 template<typename T>
 void ConcreteDeviceArg<T>::commit()
 {
+    pImpl->mMember.callback(value());
 }
 
 template <typename T>
