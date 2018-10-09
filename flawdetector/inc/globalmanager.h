@@ -12,7 +12,7 @@ class GlobalManager : public QObject
 private:
     static GlobalManager m_instance;
     GlobalManager();
-    ~GlobalManager() = default;
+    ~GlobalManager();
     GlobalManager(const GlobalManager&) = delete;
     GlobalManager& operator=(const GlobalManager&) = delete;
     QScopedPointer<ImplGlobalManager> pImpl;

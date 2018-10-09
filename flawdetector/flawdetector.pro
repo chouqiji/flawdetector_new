@@ -29,12 +29,14 @@ SOURCES += \
         src/main.cpp \
         src/desktop.cpp \
     src/globalmanager.cpp \
-    src/devarg/impl.cpp
+    src/devarg/impl.cpp \
+    src/component/arginspector.cpp
 
 HEADERS += \
         inc/desktop.h \
     inc/globalmanager.h \
     inc/devicearg.h \
-    inc/private/devicearg_impl.h
+    inc/private/devicearg_impl.h \
+    inc/arginspector.h
 
 CONFIG += c++14

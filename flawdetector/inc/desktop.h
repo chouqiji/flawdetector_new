@@ -1,9 +1,9 @@
 #ifndef DESKTOP_H
 #define DESKTOP_H
 
-#include <QMainWindow>
+#include <QWidget>
 
-class Desktop : public QMainWindow
+class Desktop : public QWidget
 {
     Q_OBJECT
 
