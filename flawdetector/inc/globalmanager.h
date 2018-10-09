@@ -12,7 +12,7 @@ class GlobalManager : public QObject
 private:
     static GlobalManager m_instance;
     GlobalManager();
-    ~GlobalManager();
+    ~GlobalManager() = default;
     GlobalManager(const GlobalManager&) = delete;
     GlobalManager& operator=(const GlobalManager&) = delete;
     QScopedPointer<ImplGlobalManager> pImpl;
@@ -23,12 +23,12 @@ public:
     template <typename T>
     using DevArgPtr = QSharedPointer<DeviceArg::IDeviceArg<T>>;
     template <typename T>
-    DevArgPtr<T> getDeviceArg(const QString& argName);
+    DevArgPtr<T> getDeviceArg(const QString& argToken);
 
-    void setDeviceArgByIndex(const QString& argName, const unsigned int& value);
-    void setDeviceArg(const QString& argName, const QString& value);
-    void setDeviceArg(const QString& argName, const int& value);
-    void setDeviceArg(const QString& argName, const float& value);
+    void setDeviceArgByIndex(const QString& argToken, const unsigned int& value);
+    void setDeviceArg(const QString& argToken, const QString& value);
+    void setDeviceArg(const QString& argToken, const int& value);
+    void setDeviceArg(const QString& argToken, const float& value);
 };
 
 #endif // GLOBALMANAGER_H
