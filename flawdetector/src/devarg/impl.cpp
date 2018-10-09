@@ -6,15 +6,15 @@ class DeviceArg::implDeviceArg
 public:
     typedef DeviceArg::DeviceArgInitList<T> DataMember;
 
-    implDeviceArg(ConcreteDeviceArg<T> *pParent) : mPParent{pParent} {}
+    implDeviceArg(ConcreteDeviceArg<T> *pParent) : mPtrParent{pParent} {}
 
     implDeviceArg(ConcreteDeviceArg<T> *pParent, DataMember&& member)
-        : mMember{std::forward<DataMember>(member)}, mPParent{pParent} {}
+        : mMember{std::forward<DataMember>(member)}, mPtrParent{pParent} {}
 
     DataMember mMember;
 
 private:
-    ConcreteDeviceArg<T> *mPParent;
+    ConcreteDeviceArg<T> *mPtrParent;
 };
 
 using namespace DeviceArg;
@@ -44,7 +44,7 @@ template<typename T>
 void ConcreteDeviceArg<T>::setValue(const T &val)
 {
     pImpl->mMember.value = val;
-    emit updated();
+    emit IDeviceArg<T>::updated();
 }
 
 template<typename T>

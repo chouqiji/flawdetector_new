@@ -3,15 +3,17 @@
 class ImplGlobalManager
 {
 public:
-    ImplGlobalManager(GlobalManager* parent) : mPParent{parent} {}
+    ImplGlobalManager(GlobalManager* parent) : mPtrParent{parent}
+    {
+    }
 
 private:
-    GlobalManager* mPParent;
+    GlobalManager* mPtrParent;
 };
 
 GlobalManager GlobalManager::m_instance;
 
-GlobalManager::GlobalManager()
+GlobalManager::GlobalManager() : pImpl{new ImplGlobalManager{this}}
 {
 
 }
