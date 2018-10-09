@@ -2,6 +2,9 @@
 #define GLOBALMANAGER_H
 
 #include <QObject>
+#include "devicearg.h"
+
+class ImplGlobalManager;
 
 class GlobalManager : public QObject
 {
@@ -12,9 +15,20 @@ private:
     ~GlobalManager();
     GlobalManager(const GlobalManager&) = delete;
     GlobalManager& operator=(const GlobalManager&) = delete;
+    QScopedPointer<ImplGlobalManager> pImpl;
 
 public:
     static GlobalManager* instance();
+
+    template <typename T>
+    using DevArgPtr = QSharedPointer<DeviceArg::IDeviceArg<T>>;
+    template <typename T>
+    DevArgPtr<T> getDeviceArg(const QString& argName);
+
+    void setDeviceArgByIndex(const QString& argName, const unsigned int& value);
+    void setDeviceArg(const QString& argName, const QString& value);
+    void setDeviceArg(const QString& argName, const int& value);
+    void setDeviceArg(const QString& argName, const float& value);
 };
 
 #endif // GLOBALMANAGER_H
