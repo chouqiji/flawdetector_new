@@ -2,7 +2,9 @@
 #include <QLabel>
 #include <QBoxLayout>
 
-class ImplArgInspector
+using namespace Component;
+
+class Component::ImplArgInspector
 {
 public:
     ImplArgInspector(ArgInspector* parent);

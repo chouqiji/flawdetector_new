@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "devicearg.h"
 
+namespace Component
+{
 class ImplArgInspector;
 
 class ArgInspector : public QWidget
@@ -21,5 +23,7 @@ public:
 private:
     QScopedPointer<ImplArgInspector> pImpl;
 };
+
+} // namespace
 
 #endif // ARGINSPECTOR_H
