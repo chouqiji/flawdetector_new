@@ -29,8 +29,8 @@ SOURCES += \
         src/main.cpp \
         src/desktop.cpp \
     src/globalmanager.cpp \
-    src/devarg/impl.cpp \
-    src/component/arginspector.cpp
+    src/component/arginspector.cpp \
+    src/devarg/devicearg_impl.cpp
 
 HEADERS += \
         inc/desktop.h \

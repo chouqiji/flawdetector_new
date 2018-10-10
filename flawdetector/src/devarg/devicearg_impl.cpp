@@ -29,7 +29,6 @@ ConcreteDeviceArg<T>::ConcreteDeviceArg(DeviceArgInitList<T>&& init)
 template<typename T>
 ConcreteDeviceArg<T>::~ConcreteDeviceArg()
 {
-    delete pImpl;
 }
 
 template<typename T>
@@ -106,10 +105,6 @@ QSharedPointer<IDeviceArg<T>> DeviceArg::makeArg(struct DeviceArgInitList<T> &&v
 template class ConcreteDeviceArg<QString>;
 template class ConcreteDeviceArg<int>;
 template class ConcreteDeviceArg<float>;
-
-template class implDeviceArg<QString>;
-template class implDeviceArg<int>;
-template class implDeviceArg<float>;
 
 template QSharedPointer<IDeviceArg<QString>> DeviceArg::makeArg(struct DeviceArgInitList<QString>&&);
 template QSharedPointer<IDeviceArg<int>> DeviceArg::makeArg(struct DeviceArgInitList<int>&&);

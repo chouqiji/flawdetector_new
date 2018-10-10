@@ -27,7 +27,7 @@ public:
     virtual void commit();
 
 private:
-    implDeviceArg<T> *pImpl;
+    QScopedPointer<implDeviceArg<T>> pImpl;
 };
 
 }
