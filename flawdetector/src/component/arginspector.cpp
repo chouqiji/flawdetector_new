@@ -2,13 +2,23 @@
 #include <QLabel>
 #include <QBoxLayout>
 
-using namespace Component;
+namespace Component {
 
 template <typename T>
-class Component::ImplArgInspector
+class ImplArgInspector
 {
 public:
-    ImplArgInspector(ArgInspector<T>* parent);
+    ImplArgInspector(ArgInspector<T>* parent)
+        : mPtrParent{parent}
+    {
+        mLayout = new QBoxLayout{QBoxLayout::LeftToRight, mPtrParent};
+        mName = new QLabel{mPtrParent};
+        mValue = new QLabel{mPtrParent};
+        mUnit = new QLabel{mPtrParent};
+        mLayout->addWidget(mName, 30);
+        mLayout->addWidget(mValue, 60);
+        mLayout->addWidget(mUnit, 10);
+    }
 
     using PtrArg_t = QSharedPointer<DeviceArg::IDeviceArg<T>>;
     PtrArg_t arg;
@@ -17,22 +27,44 @@ public:
     QLabel *mValue;
     QBoxLayout *mLayout;
 
+    void setName(const QString &name)
+    {
+        mName->setText(name);
+    }
+
+    void setUnit(const QString &unit)
+    {
+        mUnit->setText(unit);
+    }
+
+    void setValue(const T &value);
+
 private:
     ArgInspector<T>* mPtrParent;
 };
 
 template <typename T>
-ImplArgInspector<T>::ImplArgInspector(ArgInspector<T> *parent)
-    : mPtrParent{parent}
+void ImplArgInspector<T>::setValue(const T &value)
 {
-    mLayout = new QBoxLayout{QBoxLayout::LeftToRight, mPtrParent};
-    mName = new QLabel{mPtrParent};
-    mValue = new QLabel{mPtrParent};
-    mUnit = new QLabel{mPtrParent};
-    mLayout->addWidget(mName, 30);
-    mLayout->addWidget(mValue, 60);
-    mLayout->addWidget(mUnit, 10);
+    mValue->setText(value);
 }
+
+template<>
+void ImplArgInspector<int>::setValue(const int &value)
+{
+    mValue->setText(QString::number(value));
+}
+
+template<>
+void ImplArgInspector<float>::setValue(const float &value)
+{
+    // FIXME: precision
+    mValue->setText(QString::number(value, 'f', 1));
+}
+
+} // namespace
+
+using namespace Component;
 
 template <typename T>
 ArgInspector<T>::ArgInspector(QWidget *parent)
@@ -51,9 +83,9 @@ ArgInspector<T>::~ArgInspector()
 template <typename T>
 void ArgInspector<T>::bind(PtrArg_t arg)
 {
-    pImpl->mName->setText(arg->argName());
-    pImpl->mValue->setText(arg->value());
-    pImpl->mUnit->setText(arg->unit());
+    pImpl->setName(arg->argName());
+    pImpl->setValue(arg->value());
+    pImpl->setUnit(arg->unit());
     pImpl->arg = arg;
     connect(arg.data(), &DeviceArg::IDeviceArgSignals::updated, this, &ArgInspector::updateValue);
 }
@@ -61,7 +93,7 @@ void ArgInspector<T>::bind(PtrArg_t arg)
 template <typename T>
 void ArgInspector<T>::updateValue()
 {
-    pImpl->mValue->setText(pImpl->arg->value());
+    pImpl->setValue(pImpl->arg->value());
 }
 
 // instantiate
