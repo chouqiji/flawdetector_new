@@ -4,21 +4,25 @@
 
 using namespace Component;
 
+template <typename T>
 class Component::ImplArgInspector
 {
 public:
-    ImplArgInspector(ArgInspector* parent);
-    ArgInspector::PtrStrArg_t arg;
+    ImplArgInspector(ArgInspector<T>* parent);
+
+    using PtrArg_t = QSharedPointer<DeviceArg::IDeviceArg<T>>;
+    PtrArg_t arg;
     QLabel *mName;
     QLabel *mUnit;
     QLabel *mValue;
     QBoxLayout *mLayout;
 
 private:
-    ArgInspector* mPtrParent;
+    ArgInspector<T>* mPtrParent;
 };
 
-ImplArgInspector::ImplArgInspector(ArgInspector *parent)
+template <typename T>
+ImplArgInspector<T>::ImplArgInspector(ArgInspector<T> *parent)
     : mPtrParent{parent}
 {
     mLayout = new QBoxLayout{QBoxLayout::LeftToRight, mPtrParent};
@@ -30,19 +34,22 @@ ImplArgInspector::ImplArgInspector(ArgInspector *parent)
     mLayout->addWidget(mUnit, 10);
 }
 
-ArgInspector::ArgInspector(QWidget *parent)
+template <typename T>
+ArgInspector<T>::ArgInspector(QWidget *parent)
     : QWidget{parent},
-      pImpl{new ImplArgInspector{this}}
+      pImpl{new ImplArgInspector<T>{this}}
 {
 
 }
 
-ArgInspector::~ArgInspector()
+template <typename T>
+ArgInspector<T>::~ArgInspector()
 {
 
 }
 
-void ArgInspector::bind(ArgInspector::PtrStrArg_t arg)
+template <typename T>
+void ArgInspector<T>::bind(PtrArg_t arg)
 {
     pImpl->mName->setText(arg->argName());
     pImpl->mValue->setText(arg->value());
@@ -51,7 +58,13 @@ void ArgInspector::bind(ArgInspector::PtrStrArg_t arg)
     connect(arg.data(), &DeviceArg::IDeviceArgSignals::updated, this, &ArgInspector::updateValue);
 }
 
-void ArgInspector::updateValue()
+template <typename T>
+void ArgInspector<T>::updateValue()
 {
     pImpl->mValue->setText(pImpl->arg->value());
 }
+
+// instantiate
+template class ArgInspector<QString>;
+template class ArgInspector<int>;
+template class ArgInspector<float>;

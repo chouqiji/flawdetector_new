@@ -11,9 +11,9 @@ Desktop::Desktop(QWidget *parent)
     auto p = GlobalManager::instance()->getDeviceArg<QString>("test");
     //if(!p.isNull())
 
-    auto pw = new Component::ArgInspector(this);
+    auto pw = new Component::ArgInspector<QString>(this);
     pw->bind(p);
-    auto pw2 = new Component::ArgInspector(this);
+    auto pw2 = new Component::ArgInspector<QString>(this);
     pw2->bind(p);
     auto pl = new QBoxLayout(QBoxLayout::TopToBottom, this);
     pl->addWidget(pw);
