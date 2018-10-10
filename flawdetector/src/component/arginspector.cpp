@@ -48,4 +48,10 @@ void ArgInspector::bind(ArgInspector::PtrStrArg_t arg)
     pImpl->mValue->setText(arg->value());
     pImpl->mUnit->setText(arg->unit());
     pImpl->arg = arg;
+    connect(arg.data(), &DeviceArg::IDeviceArgSignals::updated, this, &ArgInspector::updateValue);
+}
+
+void ArgInspector::updateValue()
+{
+    pImpl->mValue->setText(pImpl->arg->value());
 }

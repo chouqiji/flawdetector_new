@@ -7,13 +7,18 @@
 Desktop::Desktop(QWidget *parent)
     : QWidget(parent)
 {
+    this->resize(800, 480);
     auto p = GlobalManager::instance()->getDeviceArg<QString>("test");
     //if(!p.isNull())
 
     auto pw = new Component::ArgInspector(this);
     pw->bind(p);
-    auto pl = new QBoxLayout(QBoxLayout::LeftToRight, this);
+    auto pw2 = new Component::ArgInspector(this);
+    pw2->bind(p);
+    auto pl = new QBoxLayout(QBoxLayout::TopToBottom, this);
     pl->addWidget(pw);
+    pl->addWidget(pw2);
+    p->setValue("value2");
 }
 
 Desktop::~Desktop()

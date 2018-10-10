@@ -22,6 +22,8 @@ public:
 
 private:
     QScopedPointer<ImplArgInspector> pImpl;
+private slots:
+    void updateValue();
 };
 
 } // namespace
