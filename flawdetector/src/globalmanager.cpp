@@ -83,11 +83,10 @@ GlobalManager* GlobalManager::instance()
 
 void GlobalManager::updateSettings(const QString &s, const QVariant &v)
 {
-
-    qDebug()<< s <<v.value<QVariantList>();
-
-    pImpl->mSettings.setValue(s, v.value<QVariantList>());
-    qDebug()<<pImpl->mSettings.value(s);
+    if(v.canConvert<QVariantList>())
+        pImpl->mSettings.setValue(s, v.value<QVariantList>());
+    else
+        pImpl->mSettings.setValue(s, v);
 }
 
 template<typename T>
