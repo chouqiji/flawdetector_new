@@ -27,6 +27,7 @@ signals:
     void unitChanged();
     void valueChanged();
     void committed();
+    void settingChanged(const QString &key, const QVariant &value);
 };
 
 template <typename T>
@@ -51,6 +52,7 @@ public:
 template <typename T>
 struct DeviceArgInitList
 {
+    QString argToken;
     QString argName;
     T value;
     QList<T> range;

@@ -1,4 +1,5 @@
 #include "private/devicearg_impl.h"
+#include <QVariant>
 
 template <typename T>
 class DeviceArg::implDeviceArg
@@ -37,6 +38,7 @@ void ConcreteDeviceArg<T>::setValue(const T &val)
 {
     pImpl->mMember.value = val;
     emit IDeviceArgSignals::valueChanged();
+    emit IDeviceArgSignals::settingChanged(pImpl->mMember.argToken+"/value", val);
 }
 
 template<typename T>
@@ -51,22 +53,36 @@ QList<T> ConcreteDeviceArg<T>::range() const
     return pImpl->mMember.range;
 }
 
+namespace DeviceArg {
+template<>
+QList<QString> ConcreteDeviceArg<QString>::range() const
+{
+    QList<QString> list;
+    for(const auto& str : pImpl->mMember.range)
+        list<<QObject::tr(str.toLatin1());
+
+    return list;
+}
+}
+
 template<typename T>
 void ConcreteDeviceArg<T>::setRange(const QList<T> &range)
 {
     pImpl->mMember.range = range;
+
+    emit IDeviceArgSignals::settingChanged(pImpl->mMember.argToken+"/range", QVariant::fromValue(range));
 }
 
 template<typename T>
 QString ConcreteDeviceArg<T>::argName() const
 {
-    return pImpl->mMember.argName;
+    return QObject::tr(pImpl->mMember.argName.toLatin1());
 }
 
 template<typename T>
 QString ConcreteDeviceArg<T>::unit() const
 {
-    return pImpl->mMember.unit;
+    return QObject::tr(pImpl->mMember.unit.toLatin1());
 }
 
 template<typename T>
@@ -75,6 +91,7 @@ void ConcreteDeviceArg<T>::setUnit(const QString &unit)
     pImpl->mMember.unit = unit;
 
     emit IDeviceArgSignals::unitChanged();
+    emit IDeviceArgSignals::settingChanged(pImpl->mMember.argToken+"/unit", unit);
 }
 
 template<typename T>

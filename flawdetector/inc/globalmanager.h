@@ -25,10 +25,8 @@ public:
     template <typename T>
     DevArgPtr<T> getDeviceArg(const QString& argToken);
 
-    void setDeviceArgByIndex(const QString& argToken, const unsigned int& value);
-    void setDeviceArg(const QString& argToken, const QString& value);
-    void setDeviceArg(const QString& argToken, const int& value);
-    void setDeviceArg(const QString& argToken, const float& value);
+public slots:
+    void updateSettings(const QString&, const QVariant&);
 };
 
 #endif // GLOBALMANAGER_H

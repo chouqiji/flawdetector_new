@@ -1,5 +1,6 @@
 #include "globalmanager.h"
 #include <QHash>
+#include <QSettings>
 #include <QMutexLocker>
 
 class ImplGlobalManager
@@ -9,6 +10,7 @@ public:
 
     ImplGlobalManager(GlobalManager* parent);
     RawPointer getDeviceArg(const QString &argToken);
+    QSettings  mSettings{"set.ini", QSettings::IniFormat};
 
 private:
     using TokenType = QString;
@@ -24,7 +26,8 @@ ImplGlobalManager::ImplGlobalManager(GlobalManager *parent) : mPtrParent{parent}
     using namespace DeviceArg;
 
     mDictionary["test"] =  makeArg<QString>(
-                            {"name",
+                            {"test",
+                             "name2",
                              "value1",
                              {"value1", "value2", "value3"},
                              "unit",
