@@ -20,8 +20,9 @@ private:
 using namespace DeviceArg;
 
 template<typename T>
-ConcreteDeviceArg<T>::ConcreteDeviceArg(DeviceArgInitList<T>&& init)
-    : pImpl{new implDeviceArg<T>{ this,
+ConcreteDeviceArg<T>::ConcreteDeviceArg(DeviceArgInitList<T>&& init, QObject *parent)
+    : IDeviceArg<T>{parent},
+      pImpl{new implDeviceArg<T>{ this,
                                   std::forward<DeviceArgInitList<T> >(init)} }
 {
 }
@@ -86,17 +87,17 @@ template<typename T>
 void ConcreteDeviceArg<T>::commit()
 {
     if(pImpl->mMember.callback != nullptr)
-        pImpl->mMember.callback(value());
+        pImpl->mMember.callback(value()); // synchronized
 
-    emit IDeviceArgSignals::committed();
+    emit IDeviceArgSignals::committed(); // can be asynchronized
 }
 
 template <typename T>
-QSharedPointer<IDeviceArg<T>> DeviceArg::makeArg(struct DeviceArgInitList<T> &&value)
+QSharedPointer<IDeviceArgSignals> DeviceArg::makeArg(struct DeviceArgInitList<T> &&value, QObject *parent)
 {
-    return QSharedPointer<IDeviceArg<T> >{
+    return QSharedPointer<IDeviceArgSignals>{
         new ConcreteDeviceArg<T>{
-            std::forward<DeviceArgInitList<T> >(value)
+            std::forward<DeviceArgInitList<T> >(value), parent
         }
     };
 }
@@ -106,6 +107,6 @@ template class ConcreteDeviceArg<QString>;
 template class ConcreteDeviceArg<int>;
 template class ConcreteDeviceArg<float>;
 
-template QSharedPointer<IDeviceArg<QString>> DeviceArg::makeArg(struct DeviceArgInitList<QString>&&);
-template QSharedPointer<IDeviceArg<int>> DeviceArg::makeArg(struct DeviceArgInitList<int>&&);
-template QSharedPointer<IDeviceArg<float>> DeviceArg::makeArg(struct DeviceArgInitList<float>&&);
+template QSharedPointer<IDeviceArgSignals> DeviceArg::makeArg(struct DeviceArgInitList<QString>&&, QObject *parent);
+template QSharedPointer<IDeviceArgSignals> DeviceArg::makeArg(struct DeviceArgInitList<int>&&, QObject *parent);
+template QSharedPointer<IDeviceArgSignals> DeviceArg::makeArg(struct DeviceArgInitList<float>&&, QObject *parent);

@@ -13,7 +13,7 @@ template <typename T>
 class ConcreteDeviceArg : public IDeviceArg<T>
 {
 public:
-    explicit ConcreteDeviceArg(DeviceArgInitList<T> &&init = DeviceArgInitList<T>{});
+    explicit ConcreteDeviceArg(DeviceArgInitList<T> &&init = DeviceArgInitList<T>{}, QObject *parent = nullptr);
     ~ConcreteDeviceArg();
 
     virtual void setValue(const T &val);

@@ -18,7 +18,7 @@ class IDeviceArgSignals : public QObject
 {
     Q_OBJECT
 protected:
-    IDeviceArgSignals() = default;
+    IDeviceArgSignals(QObject *parent = nullptr) : QObject{parent} {}
     IDeviceArgSignals(const IDeviceArgSignals&) = default;
     ~IDeviceArgSignals() = default;
     IDeviceArgSignals& operator=(const IDeviceArgSignals&) = default;
@@ -32,6 +32,9 @@ signals:
 template <typename T>
 class IDeviceArg : public IDeviceArgSignals
 {
+protected:
+    IDeviceArg(QObject *parent = nullptr) : IDeviceArgSignals{parent} {}
+
 public:
     virtual T value() const = 0;
     virtual void setValue(const T&) = 0;
@@ -57,7 +60,7 @@ struct DeviceArgInitList
 };
 
 template <typename T>
-QSharedPointer<IDeviceArg<T>> makeArg(struct DeviceArgInitList<T>&&);
+QSharedPointer<IDeviceArgSignals> makeArg(struct DeviceArgInitList<T>&&, QObject *parent = nullptr);
 
 } // namespace
 

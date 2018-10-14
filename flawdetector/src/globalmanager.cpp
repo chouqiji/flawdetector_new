@@ -1,25 +1,19 @@
 #include "globalmanager.h"
-#include <QMap>
-
-template <typename T>
-using DevArgPtr = QSharedPointer<DeviceArg::IDeviceArg<T>>;
+#include <QHash>
 
 class ImplGlobalManager
 {
 public:
+    using RawPointer = QSharedPointer<DeviceArg::IDeviceArgSignals>;
+
     ImplGlobalManager(GlobalManager* parent);
-template <typename T>
-    DevArgPtr<T> getDeviceArg(const QString &argToken);
+    RawPointer getDeviceArg(const QString &argToken);
 
 private:
-    typedef QString TokenType;
-    typedef QMap<TokenType, DevArgPtr<QString>> strArgDict_t;
-    typedef QMap<TokenType, DevArgPtr<int>>     intArgDict_t;
-    typedef QMap<TokenType, DevArgPtr<float>>   floatArgDict_t;
+    using TokenType = QString;
+    using Dictionary_t = QHash<TokenType, RawPointer>;
 
-    strArgDict_t   mStrArgDict;
-    intArgDict_t   mIntArgDict;
-    floatArgDict_t mFloatArgDict;
+    Dictionary_t   mDictionary;
 
     GlobalManager* mPtrParent;
 };
@@ -28,40 +22,20 @@ ImplGlobalManager::ImplGlobalManager(GlobalManager *parent) : mPtrParent{parent}
 {
     using namespace DeviceArg;
 
-    mStrArgDict["test"] =  makeArg<QString>({
-                             "name",
+    mDictionary["test"] =  makeArg<QString>(
+                            {"name",
                              "value1",
                              {"value1", "value2", "value3"},
                              "unit",
                              CommitPolicy::Immediate,
-                             [](const QString&){
-                                    return;
-                             }
-                           });
+                             nullptr}
+                           , mPtrParent);
+
 }
 
-template<typename T>
-DevArgPtr<T> ImplGlobalManager::getDeviceArg(const QString&)
+ImplGlobalManager::RawPointer ImplGlobalManager::getDeviceArg(const QString& argToken)
 {
-    return DevArgPtr<T>(nullptr);
-}
-
-template<>
-DevArgPtr<QString> ImplGlobalManager::getDeviceArg(const QString &argToken)
-{
-    return mStrArgDict.value(argToken);
-}
-
-template<>
-DevArgPtr<int> ImplGlobalManager::getDeviceArg(const QString &argToken)
-{
-    return mIntArgDict.value(argToken);
-}
-
-template<>
-DevArgPtr<float> ImplGlobalManager::getDeviceArg(const QString &argToken)
-{
-    return mFloatArgDict.value(argToken);
+    return mDictionary.value(argToken, ImplGlobalManager::RawPointer{});
 }
 
 GlobalManager GlobalManager::m_instance;
@@ -73,7 +47,6 @@ GlobalManager::GlobalManager() : pImpl{new ImplGlobalManager{this}}
 
 GlobalManager::~GlobalManager()
 {
-
 }
 
 GlobalManager *GlobalManager::instance()
@@ -82,12 +55,12 @@ GlobalManager *GlobalManager::instance()
 }
 
 template<typename T>
-DevArgPtr<T> GlobalManager::getDeviceArg(const QString &argToken)
+GlobalManager::DevArgPtr<T> GlobalManager::getDeviceArg(const QString &argToken)
 {
-    return pImpl->getDeviceArg<T>(std::forward<const QString>(argToken));
+    return pImpl->getDeviceArg(std::forward<const QString>(argToken)).dynamicCast<DeviceArg::IDeviceArg<T>>();
 }
 
 // instantiation
-template DevArgPtr<QString> GlobalManager::getDeviceArg(const QString&);
-template DevArgPtr<int> GlobalManager::getDeviceArg(const QString&);
-template DevArgPtr<float> GlobalManager::getDeviceArg(const QString&);
+template GlobalManager::DevArgPtr<QString> GlobalManager::getDeviceArg(const QString&);
+template GlobalManager::DevArgPtr<int> GlobalManager::getDeviceArg(const QString&);
+template GlobalManager::DevArgPtr<float> GlobalManager::getDeviceArg(const QString&);
