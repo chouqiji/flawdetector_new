@@ -1,5 +1,6 @@
 #include "globalmanager.h"
 #include <QHash>
+#include <QMutexLocker>
 
 class ImplGlobalManager
 {
@@ -38,20 +39,39 @@ ImplGlobalManager::RawPointer ImplGlobalManager::getDeviceArg(const QString& arg
     return mDictionary.value(argToken, ImplGlobalManager::RawPointer{});
 }
 
-GlobalManager GlobalManager::m_instance;
-
 GlobalManager::GlobalManager() : pImpl{new ImplGlobalManager{this}}
 {
-
 }
 
 GlobalManager::~GlobalManager()
 {
 }
 
-GlobalManager *GlobalManager::instance()
+GlobalManager* GlobalManager::mInstance = nullptr;
+
+GlobalManager* GlobalManager::instance()
 {
-    return &m_instance;
+    static bool init = true;
+    static QMutex lock;
+
+    QMutexLocker locker(&lock);
+
+    if(init)
+    {
+        mInstance = new GlobalManager;
+        init = false;
+    }
+
+    return mInstance;
+}
+
+void GlobalManager::updateSettings(const QString &s, const QVariant &v)
+{
+
+    qDebug()<< s <<v.value<QVariantList>();
+
+    pImpl->mSettings.setValue(s, v.value<QVariantList>());
+    qDebug()<<pImpl->mSettings.value(s);
 }
 
 template<typename T>

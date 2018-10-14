@@ -10,7 +10,7 @@ class GlobalManager : public QObject
 {
     Q_OBJECT
 private:
-    static GlobalManager m_instance;
+    static GlobalManager *mInstance;
     GlobalManager();
     ~GlobalManager();
     GlobalManager(const GlobalManager&) = delete;
