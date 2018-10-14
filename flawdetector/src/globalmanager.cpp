@@ -1,5 +1,6 @@
 #include "globalmanager.h"
 #include <QHash>
+#include <QDebug>
 #include <QSettings>
 #include <QMutexLocker>
 
@@ -35,6 +36,18 @@ ImplGlobalManager::ImplGlobalManager(GlobalManager *parent) : mPtrParent{parent}
                              nullptr}
                            , mPtrParent);
 
+    mDictionary["tfloat"] =  makeArg<float>(
+                            {"tfloat",
+                             QT_TR_NOOP("name2"),
+                             1.0,
+                             {0.1, 1.1},
+                             "unit",
+                             CommitPolicy::Immediate,
+                             nullptr}
+                           , mPtrParent);
+
+    for(const auto& p : mDictionary)
+        QObject::connect(p.data(), IDeviceArgSignals::settingChanged, mPtrParent, GlobalManager::updateSettings);
 }
 
 ImplGlobalManager::RawPointer ImplGlobalManager::getDeviceArg(const QString& argToken)

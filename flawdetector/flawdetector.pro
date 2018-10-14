@@ -40,3 +40,6 @@ HEADERS += \
     inc/arginspector.h
 
 CONFIG += c++14
+
+TRANSLATIONS += \
+    zh_cn.ts

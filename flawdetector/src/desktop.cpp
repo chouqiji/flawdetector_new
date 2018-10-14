@@ -19,6 +19,10 @@ Desktop::Desktop(QWidget *parent)
     pl->addWidget(pw);
     pl->addWidget(pw2);
     p->setValue("value2");
+    p->setRange({"valuex, valuey"});
+
+    auto u = GlobalManager::instance()->getDeviceArg<float>("tfloat");
+    u->setRange({0.3, 0.5});
 }
 
 Desktop::~Desktop()
