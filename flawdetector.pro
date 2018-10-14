@@ -2,5 +2,5 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     fddevice \
-    flawdetector \
-    QCustomPlot/sharedlib/sharedlib-compilation
+    flawdetector
+   # QCustomPlot/sharedlib/sharedlib-compilation
