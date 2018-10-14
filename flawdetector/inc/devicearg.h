@@ -25,7 +25,7 @@ protected:
 
 signals:
     void unitChanged();
-    void updated();
+    void valueChanged();
     void committed();
 };
 

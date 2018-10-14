@@ -87,7 +87,7 @@ void ArgInspector<T>::bind(PtrArg_t arg)
     pImpl->setValue(arg->value());
     pImpl->setUnit(arg->unit());
     pImpl->arg = arg;
-    connect(arg.data(), &DeviceArg::IDeviceArgSignals::updated, this, &ArgInspector::updateValue);
+    connect(arg.data(), &DeviceArg::IDeviceArgSignals::valueChanged, this, &ArgInspector::updateValue);
 }
 
 template <typename T>

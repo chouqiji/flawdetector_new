@@ -36,7 +36,7 @@ template<typename T>
 void ConcreteDeviceArg<T>::setValue(const T &val)
 {
     pImpl->mMember.value = val;
-    emit IDeviceArgSignals::updated();
+    emit IDeviceArgSignals::valueChanged();
 }
 
 template<typename T>
