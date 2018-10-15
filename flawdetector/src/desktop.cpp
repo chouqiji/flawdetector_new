@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "arginspector.h"
 #include <QBoxLayout>
+#include <QShortcut>
 
 Desktop::Desktop(QWidget *parent)
     : QWidget(parent)
@@ -13,6 +14,8 @@ Desktop::Desktop(QWidget *parent)
 
     auto pw = new Component::ArgInspector<QString>(this);
     pw->bind(p);
+    auto sc = new QShortcut(Qt::Key_F1, pw);
+    connect(sc, QShortcut::activated, [](){qDebug()<<"wow";});
     auto pw2 = new Component::ArgInspector<QString>(this);
     pw2->bind(p);
     auto pl = new QBoxLayout(QBoxLayout::TopToBottom, this);
@@ -23,6 +26,7 @@ Desktop::Desktop(QWidget *parent)
 
     auto u = GlobalManager::instance()->getDeviceArg<float>("tfloat");
     u->setRange({0.3, 0.5});
+    u->setValue(11.0);
 }
 
 Desktop::~Desktop()
