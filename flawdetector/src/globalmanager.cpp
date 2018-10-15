@@ -48,6 +48,13 @@ ImplGlobalManager::ImplGlobalManager(GlobalManager *parent) : mPtrParent{parent}
 
     for(const auto& p : mDictionary)
         QObject::connect(p.data(), IDeviceArgSignals::settingChanged, mPtrParent, GlobalManager::updateSettings);
+
+    auto restriction = [&](){
+        auto a = mDictionary["tfloat"].dynamicCast<IDeviceArg<float>>()->value();
+        mDictionary["test"].dynamicCast<IDeviceArg<QString>>()->setValue(QString::number(a, 'f', 2));
+    };
+
+    QObject::connect(mDictionary["tfloat"].data(), IDeviceArgSignals::valueChanged, restriction);
 }
 
 ImplGlobalManager::RawPointer ImplGlobalManager::getDeviceArg(const QString& argToken)
