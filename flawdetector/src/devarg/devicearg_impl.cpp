@@ -55,6 +55,12 @@ QList<T> ConcreteDeviceArg<T>::range() const
 
 namespace DeviceArg {
 template<>
+QString ConcreteDeviceArg<QString>::value() const
+{
+    return QObject::tr(pImpl->mMember.value.toLatin1());
+}
+
+template<>
 QList<QString> ConcreteDeviceArg<QString>::range() const
 {
     QList<QString> list;
