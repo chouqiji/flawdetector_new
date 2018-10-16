@@ -118,11 +118,7 @@ void ConcreteDeviceArg<T>::commit()
 template <typename T>
 QSharedPointer<IDeviceArgSignals> DeviceArg::makeArg(struct DeviceArgInitList<T> &&value, QObject *parent)
 {
-    return QSharedPointer<IDeviceArgSignals>{
-        new ConcreteDeviceArg<T>{
-            std::forward<DeviceArgInitList<T> >(value), parent
-        }
-    };
+    return QSharedPointer<ConcreteDeviceArg<T>>::create(std::forward<DeviceArgInitList<T> >(value), parent);
 }
 
 // instantiation

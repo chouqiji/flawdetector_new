@@ -37,11 +37,11 @@ protected:
     IDeviceArg(QObject *parent = nullptr) : IDeviceArgSignals{parent} {}
 
 public:
+    virtual QString argName() const = 0;
     virtual T value() const = 0;
     virtual void setValue(const T&) = 0;
     virtual QList<T> range() const = 0;
     virtual void setRange(const QList<T>&) = 0;
-    virtual QString argName() const = 0;
     virtual QString unit() const = 0;
     virtual void setUnit(const QString&) = 0;
     virtual CommitPolicy commitPolicy() const = 0;
