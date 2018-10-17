@@ -14,6 +14,12 @@ enum class CommitPolicy
     AfterConfirmed
 };
 
+enum class ArgType
+{
+    Numeric,
+    Enumerable
+};
+
 class IDeviceArgSignals : public QObject
 {
     Q_OBJECT
@@ -24,24 +30,45 @@ protected:
     IDeviceArgSignals& operator=(const IDeviceArgSignals&) = default;
 
 signals:
-    void unitChanged();
     void valueChanged();
-    void committed();
+    void unitChanged();
+    void committed(); // call route:
     void settingChanged(const QString &key, const QVariant &value);
 };
 
 template <typename T>
+struct is_numeric
+{
+    static constexpr bool value = std::is_integral<T>::value || std::is_floating_point<T>::value;
+};
+
+template <typename T>
+struct NumericRange
+{
+    T lower;
+    T upper;
+};
+
+template <typename T, ArgType type = ArgType::Numeric>
 class IDeviceArg : public IDeviceArgSignals
 {
 protected:
     IDeviceArg(QObject *parent = nullptr) : IDeviceArgSignals{parent} {}
 
 public:
+    using ValueType = typename std::conditional
+                    <type == ArgType::Numeric && is_numeric<T>::value
+                    , T, qint32>::type;
+
+    using RangeType = typename std::conditional
+                    <type == ArgType::Numeric && is_numeric<T>::value
+                    , NumericRange<T>, QList<T>>::type;
+
     virtual QString argName() const = 0;
-    virtual T value() const = 0;
-    virtual void setValue(const T&) = 0;
-    virtual QList<T> range() const = 0;
-    virtual void setRange(const QList<T>&) = 0;
+    virtual ValueType value() const = 0;
+    virtual void setValue(const ValueType&) = 0;
+    virtual RangeType range() const = 0;
+    virtual void setRange(const RangeType&) = 0;
     virtual QString unit() const = 0;
     virtual void setUnit(const QString&) = 0;
     virtual CommitPolicy commitPolicy() const = 0;
@@ -49,20 +76,24 @@ public:
     virtual void commit() = 0;
 };
 
-template <typename T>
+template <typename T, ArgType type = ArgType::Numeric>
 struct DeviceArgInitList
 {
-    QString argToken;
+    using ValueType = typename IDeviceArg<T, type>::ValueType;
+    using RangeType = typename IDeviceArg<T, type>::RangeType;
     QString argName;
-    T value;
-    QList<T> range;
+    ValueType value;
     QString unit;
+    RangeType range;
     CommitPolicy policy;
-    std::function<void(const T&)> callback;
+    std::function<void(const ValueType&)> callback;
 };
 
 template <typename T>
-QSharedPointer<IDeviceArgSignals> makeArg(struct DeviceArgInitList<T>&&, QObject *parent = nullptr);
+QSharedPointer<IDeviceArgSignals> makeNumericArg(struct DeviceArgInitList<T>&&, QObject *parent = nullptr);
+
+template <typename T>
+QSharedPointer<IDeviceArgSignals> makeEnumerableArg(struct DeviceArgInitList<T>&&, QObject *parent = nullptr);
 
 } // namespace
 
