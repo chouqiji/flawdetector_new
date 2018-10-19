@@ -1,6 +1,7 @@
 #include "arginspector.h"
 #include <QLabel>
 #include <QBoxLayout>
+#include <QVariant>
 
 namespace Component {
 
@@ -20,8 +21,8 @@ public:
         mLayout->addWidget(mUnit, 10);
     }
 
-    using PtrArg_t = QSharedPointer<DeviceArg::IDeviceArg<T>>;
-    PtrArg_t arg;
+    using PtrArg = typename ArgInspector<T>::PtrArg;
+    PtrArg arg;
     QLabel *mName;
     QLabel *mUnit;
     QLabel *mValue;
@@ -49,23 +50,6 @@ void ImplArgInspector<T>::setValue(const T &value)
     mValue->setText(value);
 }
 
-template<>
-void ImplArgInspector<int>::setValue(const int &value)
-{
-    mValue->setText(QString::number(value));
-}
-
-template<>
-void ImplArgInspector<float>::setValue(const float &value)
-{
-    // FIXME: precision
-    mValue->setText(QString::number(value, 'f', 1));
-}
-
-} // namespace
-
-using namespace Component;
-
 template <typename T>
 ArgInspector<T>::ArgInspector(QWidget *parent)
     : QWidget{parent},
@@ -80,23 +64,23 @@ ArgInspector<T>::~ArgInspector()
 
 }
 
-template <typename T>
-void ArgInspector<T>::bind(PtrArg_t arg)
+template <>
+void ArgInspector<QString>::bind(PtrArg arg)
 {
-    pImpl->setName(arg->argName());
-    pImpl->setValue(arg->value());
-    pImpl->setUnit(arg->unit());
+    pImpl->setName(arg->displayedName());
+//    pImpl->setValue(arg->value());
+    pImpl->setUnit(arg->displayedUnit());
     pImpl->arg = arg;
-    connect(arg.data(), &DeviceArg::IDeviceArgSignals::valueChanged, this, &ArgInspector::updateValue);
+    arg->connect(&DeviceArg::Signals::valueChanged, this, [](){qDebug("233");});
+    arg->connect(&DeviceArg::Signals::valueChanged, this, &ArgInspector<QString>::updateValue);
 }
 
 template <typename T>
 void ArgInspector<T>::updateValue()
 {
-    pImpl->setValue(pImpl->arg->value());
+    pImpl->setValue(pImpl->arg->value().toString());
 }
 
 // instantiate
 template class ArgInspector<QString>;
-template class ArgInspector<int>;
-template class ArgInspector<float>;
+} // namespace

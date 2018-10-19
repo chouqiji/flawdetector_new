@@ -2,7 +2,6 @@
 #define GLOBALMANAGER_H
 
 #include <QObject>
-#include "devicearg.h"
 
 class ImplGlobalManager;
 
@@ -20,10 +19,10 @@ private:
 public:
     static GlobalManager* instance();
 
-    template <typename T>
-    using DevArgPtr = QSharedPointer<DeviceArg::IDeviceArg<T>>;
-    template <typename T>
-    DevArgPtr<T> getDeviceArg(const QString& argToken);
+//    template <typename T>
+//    using DevArgPtr = QSharedPointer<DeviceArg::IDeviceArg<T>>;
+//    template <typename T>
+//    DevArgPtr<T> getDeviceArg(const QString& argToken);
 
 public slots:
     void updateSettings(const QString&, const QVariant&);

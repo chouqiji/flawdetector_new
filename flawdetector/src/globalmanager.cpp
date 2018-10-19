@@ -7,59 +7,48 @@
 class ImplGlobalManager
 {
 public:
-    using RawPointer = QSharedPointer<DeviceArg::IDeviceArgSignals>;
-
     ImplGlobalManager(GlobalManager* parent);
-    RawPointer getDeviceArg(const QString &argToken);
     QSettings  mSettings{"set.ini", QSettings::IniFormat};
 
 private:
     using TokenType = QString;
-    using Dictionary_t = QHash<TokenType, RawPointer>;
-
-    Dictionary_t   mDictionary;
 
     GlobalManager* mPtrParent;
 };
 
 ImplGlobalManager::ImplGlobalManager(GlobalManager *parent) : mPtrParent{parent}
 {
-    using namespace DeviceArg;
+//    using namespace DeviceArg;
 
-    mDictionary["test"] =  makeArg<QString>(
-                            {"test",
-                             "name2",
-                             "value1",
-                             {"value1", "value2", "value3"},
-                             "unit",
-                             CommitPolicy::Immediate,
-                             nullptr}
-                           , mPtrParent);
+//    DeviceArgInitList<QString> pww{"test",
+//              0,
+//              "unit",
+//              {"value1", "value2", "value3"},
+//              static_cast<CommitPolicy>(0),
+//              nullptr};
 
-    mDictionary["tfloat"] =  makeArg<float>(
-                            {"tfloat",
-                             QT_TR_NOOP("name2"),
-                             1.0,
-                             {0.1, 1.1},
-                             "unit",
-                             CommitPolicy::Immediate,
-                             nullptr}
-                           , mPtrParent);
+//    mDictionary["test"] =  makeEnumerableArg(
+//                            std::move(pww)
+//                           , mPtrParent);
 
-    for(const auto& p : mDictionary)
-        QObject::connect(p.data(), IDeviceArgSignals::settingChanged, mPtrParent, GlobalManager::updateSettings);
+//    mDictionary["tfloat"] =  makeNumericArg<float>(
+//                            {QT_TR_NOOP("name2"),
+//                             1.0,
+//                             "unit",
+//                             {0.1f, 1.1f},
+//                             CommitPolicy::Immediate,
+//                             nullptr}
+//                           , mPtrParent);
 
-    auto restriction = [&](){
-        auto a = mDictionary["tfloat"].dynamicCast<IDeviceArg<float>>()->value();
-        mDictionary["test"].dynamicCast<IDeviceArg<QString>>()->setValue(QString::number(a, 'f', 2));
-    };
+//    for(const auto& p : mDictionary)
+//        QObject::connect(p.data(), &IDeviceArgSignals::settingChanged, mPtrParent, &GlobalManager::updateSettings);
 
-    QObject::connect(mDictionary["tfloat"].data(), IDeviceArgSignals::valueChanged, restriction);
-}
+//    auto restriction = [&](){
+//        auto a = mDictionary["tfloat"].dynamicCast<IDeviceArg<float>>()->value();
+//        mDictionary["test"].dynamicCast<IDeviceArg<QString>>()->setValue(0);
+//    };
 
-ImplGlobalManager::RawPointer ImplGlobalManager::getDeviceArg(const QString& argToken)
-{
-    return mDictionary.value(argToken, ImplGlobalManager::RawPointer{});
+//    QObject::connect(mDictionary["tfloat"].data(), &IDeviceArgSignals::valueChanged, restriction);
 }
 
 GlobalManager::GlobalManager() : pImpl{new ImplGlobalManager{this}}
@@ -96,13 +85,13 @@ void GlobalManager::updateSettings(const QString &s, const QVariant &v)
         pImpl->mSettings.setValue(s, v);
 }
 
-template<typename T>
-GlobalManager::DevArgPtr<T> GlobalManager::getDeviceArg(const QString &argToken)
-{
-    return pImpl->getDeviceArg(std::forward<const QString>(argToken)).dynamicCast<DeviceArg::IDeviceArg<T>>();
-}
+//template<typename T>
+//GlobalManager::DevArgPtr<T> GlobalManager::getDeviceArg(const QString &argToken)
+//{
+//    return pImpl->getDeviceArg(std::forward<const QString>(argToken)).dynamicCast<DeviceArg::IDeviceArg<T>>();
+//}
 
-// instantiation
-template GlobalManager::DevArgPtr<QString> GlobalManager::getDeviceArg(const QString&);
-template GlobalManager::DevArgPtr<int> GlobalManager::getDeviceArg(const QString&);
-template GlobalManager::DevArgPtr<float> GlobalManager::getDeviceArg(const QString&);
+//// instantiation
+//template GlobalManager::DevArgPtr<QString> GlobalManager::getDeviceArg(const QString&);
+//template GlobalManager::DevArgPtr<int> GlobalManager::getDeviceArg(const QString&);
+//template GlobalManager::DevArgPtr<float> GlobalManager::getDeviceArg(const QString&);

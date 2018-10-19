@@ -2,7 +2,7 @@
 #define ARGINSPECTOR_H
 
 #include <QWidget>
-#include "devicearg.h"
+#include "devicearg/viewport.h"
 
 namespace Component
 {
@@ -17,11 +17,12 @@ public:
     explicit ArgInspector(QWidget* parent);
     ~ArgInspector();
 
-    using PtrArg_t = QSharedPointer<DeviceArg::IDeviceArg<T>>;
-    void bind(PtrArg_t arg);
+    using PtrArg = QSharedPointer<DeviceArg::ViewPort>;
+    void bind(PtrArg arg);
 
 private:
     QScopedPointer<ImplArgInspector<T>> pImpl;
+private slots:
     void updateValue();
 };
 

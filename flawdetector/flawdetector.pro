@@ -30,17 +30,16 @@ SOURCES += \
         src/desktop.cpp \
     src/globalmanager.cpp \
     src/component/arginspector.cpp \
-    src/devicearg/devicearg_impl.cpp
+    src/devicearg/impl_enumerablearg.cpp
 
 HEADERS += \
         inc/desktop.h \
     inc/globalmanager.h \
-    inc/devicearg.h \
-    inc/private/devicearg_impl.h \
     inc/arginspector.h \
     inc/devicearg/viewport.h \
     inc/devicearg/editport.h \
-    inc/devicearg/devicearg.h
+    inc/devicearg/devicearg.h \
+    inc/devicearg/private/impl_enumerablearg.h
 
 QMAKE_CXXFLAGS -= -std=gnu++11 -std=std++11
 QMAKE_CXXFLAGS *= -std=gnu++17
