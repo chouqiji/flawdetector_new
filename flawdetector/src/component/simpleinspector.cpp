@@ -15,6 +15,20 @@ SimpleInspector::~SimpleInspector()
     delete ui;
 }
 
+void SimpleInspector::setEditor(QWidget *editor)
+{
+    mEditor = editor;
+    mEditor->setParent(this);
+    mEditor->hide();
+}
+
+void SimpleInspector::activateEditor()
+{
+    ui->value->hide();
+    mEditor->show();
+    ui->layout->insertWidget(1, mEditor);
+}
+
 void SimpleInspector::setValue(const QString &value)
 {
     ui->value->setText(value);

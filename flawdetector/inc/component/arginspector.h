@@ -18,15 +18,14 @@ public:
 
     using ArgPointer = QSharedPointer<DeviceArg::ViewPort>;
     using Converter  = std::function<QString(const QVariant&)>;
-    virtual void bind(ArgPointer pArg, Converter converter = defaultConverter);
-    void setEditor(QWidget *editor) {mEditor = editor;}
-    void activateEditor() {mEditor->show();}
+    void bind(ArgPointer pArg, Converter converter = defaultConverter);
+    virtual void setEditor(QWidget*) {}
+    virtual void activateEditor() {}
 
 protected:
     virtual void setValue(const QString&) {}
     virtual void setName(const QString&) {}
     virtual void setUnit(const QString&) {}
-
 
     static QString defaultConverter(const QVariant& in) {return in.toString();}
 

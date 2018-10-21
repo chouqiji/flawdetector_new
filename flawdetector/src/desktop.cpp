@@ -19,10 +19,20 @@ Desktop::Desktop(QWidget *parent)
     pw1->bind(p);
     pw2->bind(p, [](const QVariant& in){return in.toString().append("233");});
 
+    auto pe = new QComboBox;
+    for(const auto &ele : p->range())
+        pe->addItem(ele.toString());
+    connect(pe, static_cast<void (QComboBox::*)(const int)>(&QComboBox::currentIndexChanged), std::bind(&DeviceArg::EnumerableEditPort::setIndex, p, std::placeholders::_1));
+
     auto pl = new QBoxLayout(QBoxLayout::TopToBottom, this);
     pl->addWidget(pw1);
     pl->addWidget(pw2);
-    p->setValue(0);
+
+    pw1->setEditor(pe);
+
+    auto psc = new QShortcut(Qt::Key_F1, pw1);
+    connect(psc, &QShortcut::activated, pw1, &Component::SimpleInspector::activateEditor);
+
 }
 
 Desktop::~Desktop()

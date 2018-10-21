@@ -10,7 +10,7 @@
     <height>60</height>
    </rect>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QHBoxLayout" name="layout">
    <item>
     <widget class="QLabel" name="name">
      <property name="text">
