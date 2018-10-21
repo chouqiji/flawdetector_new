@@ -15,9 +15,10 @@ public:
 // import from editport
     virtual void setIndex(const qint32 &val) override {
         mArg.value = val;
-        emit ViewPort::mSignal.valueChanged();
+        emit ViewPort::mSignal.valueChanged(mArg.range.at(mArg.value));
         emit ViewPort::mSignal.argChanged(BasicViewPort::mName + "/value", val);
     }
+
     virtual QVariantList range() const override {
         QVariantList ret;
         ret.reserve(mArg.range.size());
@@ -25,12 +26,14 @@ public:
             ret<<e;
         return ret;
     }
+
     virtual void setRange(const QList<T>& newRange) override {
         mArg.range = newRange;
         emit ViewPort::mSignal.argChanged(BasicViewPort::mName + "/range", QVariant::fromValue(newRange));
 
         setValue(std::clamp(mArg.value, 0, newRange.size() - 1));
     }
+
     virtual qint32 index() const override {return mArg.value;}
     virtual CommitPolicy commitPolicy() const override {return mArg.policy;}
     virtual void commit() override {

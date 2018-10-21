@@ -8,9 +8,9 @@ namespace DeviceArg {
 class Signals : public QObject {
     Q_OBJECT
 signals:
-    void nameChanged();
-    void valueChanged();
-    void unitChanged();
+    void nameChanged(const QString&);
+    void valueChanged(const QVariant&);
+    void unitChanged(const QString&);
     void argChanged(const QString &keyType, const QVariant &value);
     void committed(const QVariant &value);
 };

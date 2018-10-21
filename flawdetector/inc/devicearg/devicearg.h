@@ -14,13 +14,13 @@ public:
     void setUnit(const QString& unit) {
         mUnit = unit;
         mDisplayedUnit = QObject::tr(mUnit.toLatin1());
-        emit mSignal.unitChanged();
+        emit mSignal.unitChanged(mDisplayedUnit);
         emit mSignal.argChanged(mName + "/unit", unit);
     }
     void setName(const QString& name) {
         mName = name;
         mDisplayedName = QObject::tr(mName.toLatin1());
-        emit mSignal.nameChanged();
+        emit mSignal.nameChanged(mDisplayedName);
         emit mSignal.argChanged(mName + "/name", name);
     }
 protected:

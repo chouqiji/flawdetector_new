@@ -14,12 +14,13 @@ template<> QVariantList ConcreteEnumerableArg<QString>::range() const
     QVariantList ret;
     ret.reserve(mArg.range.size());
     for(const auto& e : mTranslatedRange)
-        ret<<QObject::tr(e.toLatin1());
+        ret<<e;
 
     return ret;
 }
 
-template<> void ConcreteEnumerableArg<QString>::setRange(const QList<QString>& newRange)  {
+template<> void ConcreteEnumerableArg<QString>::setRange(const QList<QString>& newRange)
+{
     mArg.range = newRange;
 
     mTranslatedRange.clear();
@@ -48,4 +49,4 @@ QSharedPointer<EnumerableArg<T>> makeArg(const QString &name, const QString &uni
 }
 
 template QSharedPointer<EnumerableArg<QString>> makeArg(const QString &name, const QString &unit, InitList<QString, ArgType::Enumerable> &&list);
-}
+} // namespace DeviceArg
