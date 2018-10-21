@@ -30,19 +30,24 @@ SOURCES += \
         src/desktop.cpp \
     src/globalmanager.cpp \
     src/component/arginspector.cpp \
-    src/devicearg/impl_enumerablearg.cpp
+    src/devicearg/impl_enumerablearg.cpp \
+    src/component/simpleinspector.cpp
 
 HEADERS += \
         inc/desktop.h \
     inc/globalmanager.h \
-    inc/arginspector.h \
+    inc/component/arginspector.h \
     inc/devicearg/viewport.h \
     inc/devicearg/editport.h \
     inc/devicearg/devicearg.h \
-    inc/devicearg/private/impl_enumerablearg.h
+    inc/devicearg/private/impl_enumerablearg.h \
+    inc/component/simpleinspector.h
 
 QMAKE_CXXFLAGS -= -std=gnu++11 -std=std++11
 QMAKE_CXXFLAGS *= -std=gnu++17
 
 TRANSLATIONS += \
     zh_cn.ts
+
+FORMS += \
+    ui/component/simpleinspector.ui

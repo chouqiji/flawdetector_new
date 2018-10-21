@@ -1,7 +1,7 @@
 #include "desktop.h"
 #include "globalmanager.h"
 #include <QDebug>
-#include "arginspector.h"
+#include "component/simpleinspector.h"
 #include <QBoxLayout>
 #include <QShortcut>
 #include <QComboBox>
@@ -13,19 +13,16 @@ Desktop::Desktop(QWidget *parent)
     this->resize(800, 480);
     auto p = DeviceArg::makeArg<QString>("name", "unit", {1, {QT_TR_NOOP("name2"), "www"}, DeviceArg::CommitPolicy::Immediate, nullptr});
 
-    DeviceArg::InitList<QString, DeviceArg::ArgType::Numeric> ss;
+    auto pw1 = new Component::SimpleInspector(this);
+    auto pw2 = new Component::SimpleInspector(this);
 
-    auto pw = new Component::ArgInspector<QString>(this);
-    pw->bind(p);
-//    auto sc = new QShortcut(Qt::Key_F1, pw);
-//    connect(sc, &QShortcut::activated, [](){qDebug()<<"wow";});
-    auto pw2 = new Component::ArgInspector<QString>(this);
-    pw2->bind(p);
+    pw1->bind(p);
+    pw2->bind(p, [](const QVariant& in){return in.toString().append("233");});
+
     auto pl = new QBoxLayout(QBoxLayout::TopToBottom, this);
-    pl->addWidget(pw);
+    pl->addWidget(pw1);
     pl->addWidget(pw2);
     p->setValue(0);
-    p->setRange({"valuex", "valuey"});
 }
 
 Desktop::~Desktop()

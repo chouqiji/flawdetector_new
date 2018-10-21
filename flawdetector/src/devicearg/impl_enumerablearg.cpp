@@ -9,6 +9,13 @@ ConcreteEnumerableArg<T>::ConcreteEnumerableArg(InitList<T, ArgType::Enumerable>
     setRange(mArg.range);
 }
 
+template<> void ConcreteEnumerableArg<QString>::setIndex(const qint32 &val)
+{
+    mArg.value = val;
+    emit ViewPort::mSignal.valueChanged(mTranslatedRange.at(mArg.value));
+    emit ViewPort::mSignal.argChanged(BasicViewPort::mName + "/value", val);
+}
+
 template<> QVariantList ConcreteEnumerableArg<QString>::range() const
 {
     QVariantList ret;
@@ -36,7 +43,7 @@ template<> void ConcreteEnumerableArg<QString>::setRange(const QList<QString>& n
 
 template<> QVariant ConcreteEnumerableArg<QString>::value() const
 {
-    return QObject::tr(mArg.range.at(mArg.value).toLatin1());
+    return mTranslatedRange.at(mArg.value);
 }
 
 template <typename T>
