@@ -18,7 +18,14 @@ public:
 
 // import from editport
     virtual void setIndex(const qint32 &val) override {
-        mShadowValue = val;
+        mArg.value = val;
+
+        if(mArg.callback != nullptr)
+            mArg.callback(mArg.value);
+
+        emit committed(mArg.value);
+        emit valueChanged(translateValue(mArg.value));
+        emit argChanged(BasicViewPort::mName + "/value", mArg.value);
     }
 
     virtual std::pair<qint32, qint32> range() const override {
@@ -48,25 +55,11 @@ public:
         mArg.range.second = newList.size() - 1;
 
         if(mArg.value != std::clamp(mArg.value, mArg.range.first, mArg.range.second))
-        {
             setIndex(mArg.value);
-            commit();
-        }
     }
 
     virtual qint32 index() const override {return mArg.value;}
     virtual CommitPolicy commitPolicy() const override {return mArg.policy;}
-    virtual void commit() override {
-
-        mArg.value = mShadowValue;
-
-        if(mArg.callback != nullptr)
-            mArg.callback(mArg.value);
-
-        emit committed(mArg.value);
-        emit valueChanged(translateValue(mArg.value));
-        emit argChanged(BasicViewPort::mName + "/value", mArg.value);
-    }
 
 // import from viewport
     virtual QVariant value() const override {return translateValue(mArg.value);}
@@ -74,7 +67,6 @@ public:
 private:
     EnumerableInitList<T> mArg;
     QStringList mTranslatedList;
-    qint32 mShadowValue;
 
     void translateList(const QList<T>&) {}
     QVariant translateValue(const qint32& value) const { return mArg.list.at(value);}

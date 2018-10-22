@@ -14,7 +14,6 @@ enum class CommitPolicy
 class EditPort {
 public:
     virtual CommitPolicy commitPolicy() const = 0;
-    virtual void commit() = 0;
     virtual ~EditPort() = default;
 };
 
