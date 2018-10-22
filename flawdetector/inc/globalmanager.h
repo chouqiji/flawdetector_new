@@ -8,13 +8,6 @@ class ImplGlobalManager;
 class GlobalManager : public QObject
 {
     Q_OBJECT
-private:
-    static GlobalManager *mInstance;
-    GlobalManager();
-    ~GlobalManager();
-    GlobalManager(const GlobalManager&) = delete;
-    GlobalManager& operator=(const GlobalManager&) = delete;
-    QScopedPointer<ImplGlobalManager> pImpl;
 
 public:
     static GlobalManager* instance();
@@ -24,8 +17,17 @@ public:
 //    template <typename T>
 //    DevArgPtr<T> getDeviceArg(const QString& argToken);
 
-public slots:
+private:
+    static GlobalManager mInstance;
+
+    QScopedPointer<ImplGlobalManager> pImpl;
+
     void updateSettings(const QString&, const QVariant&);
+
+    GlobalManager();
+    ~GlobalManager();
+    GlobalManager(const GlobalManager&) = delete;
+    GlobalManager& operator=(const GlobalManager&) = delete;
 };
 
 #endif // GLOBALMANAGER_H

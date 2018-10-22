@@ -57,24 +57,14 @@ GlobalManager::GlobalManager() : pImpl{new ImplGlobalManager{this}}
 
 GlobalManager::~GlobalManager()
 {
+
 }
 
-GlobalManager* GlobalManager::mInstance = nullptr;
+GlobalManager GlobalManager::mInstance;
 
 GlobalManager* GlobalManager::instance()
 {
-    static bool init = true;
-    static QMutex lock;
-
-    QMutexLocker locker(&lock);
-
-    if(init)
-    {
-        mInstance = new GlobalManager;
-        init = false;
-    }
-
-    return mInstance;
+    return &mInstance;
 }
 
 void GlobalManager::updateSettings(const QString &s, const QVariant &v)
