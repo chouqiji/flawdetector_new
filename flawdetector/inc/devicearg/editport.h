@@ -22,7 +22,8 @@ class EnumerableEditPort : public EditPort {
 public:
     virtual void setValue(const qint32 &val) { setIndex(std::forward<const qint32 &>(val));}
     virtual void setIndex(const qint32 &) = 0;
-    virtual QVariantList range() const = 0;
+    virtual std::pair<qint32, qint32> range() const = 0;
+    virtual QVariantList list() const = 0;
     virtual qint32 currentValue() const { return index();}
     virtual qint32 index() const = 0;
 };

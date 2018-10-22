@@ -39,9 +39,11 @@ HEADERS += \
     inc/component/arginspector.h \
     inc/devicearg/viewport.h \
     inc/devicearg/editport.h \
-    inc/devicearg/devicearg.h \
     inc/devicearg/private/impl_enumerablearg.h \
-    inc/component/simpleinspector.h
+    inc/component/simpleinspector.h \
+    inc/devicearg/enumerablearg.h \
+    inc/devicearg/basicviewport.h \
+    inc/devicearg/numericarg.h
 
 QMAKE_CXXFLAGS -= -std=gnu++11 -std=std++11
 QMAKE_CXXFLAGS *= -std=gnu++17

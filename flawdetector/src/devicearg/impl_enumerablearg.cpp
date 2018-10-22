@@ -3,51 +3,38 @@
 namespace DeviceArg {
 
 template <typename T>
-ConcreteEnumerableArg<T>::ConcreteEnumerableArg(InitList<T, ArgType::Enumerable> &&arg)
+ConcreteEnumerableArg<T>::ConcreteEnumerableArg(EnumerableInitList<T> &&arg)
     : mArg{std::forward<decltype(mArg)>(arg)}
 {
-    setRange(mArg.range);
+    translateList(mArg.list);
 }
 
-template<> void ConcreteEnumerableArg<QString>::setIndex(const qint32 &val)
+template<> void ConcreteEnumerableArg<QString>::translateList(const QList<QString>& newList)
 {
-    mArg.value = val;
-    emit ViewPort::mSignal.valueChanged(mTranslatedRange.at(mArg.value));
-    emit ViewPort::mSignal.argChanged(BasicViewPort::mName + "/value", val);
+    mTranslatedList.clear();
+    mTranslatedList.reserve(newList.size());
+
+    for(const auto& e : newList)
+        mTranslatedList<<QObject::tr(e.toLatin1());
 }
 
-template<> QVariantList ConcreteEnumerableArg<QString>::range() const
+template<> QVariant ConcreteEnumerableArg<QString>::translateValue(const qint32& value) const
+{
+    return mTranslatedList.at(value);
+}
+
+template<> QVariantList ConcreteEnumerableArg<QString>::list() const
 {
     QVariantList ret;
-    ret.reserve(mArg.range.size());
-    for(const auto& e : mTranslatedRange)
+    ret.reserve(mTranslatedList.size());
+    for(const auto& e : mTranslatedList)
         ret<<e;
 
     return ret;
 }
 
-template<> void ConcreteEnumerableArg<QString>::setRange(const QList<QString>& newRange)
-{
-    mArg.range = newRange;
-
-    mTranslatedRange.clear();
-    mTranslatedRange.reserve(newRange.size());
-
-    for(const auto& e : newRange)
-        mTranslatedRange<<QObject::tr(e.toLatin1());
-
-    emit ViewPort::mSignal.argChanged(BasicViewPort::mName + "/range", QVariant::fromValue(newRange));
-
-    setValue(std::clamp(mArg.value, 0, newRange.size() - 1));
-}
-
-template<> QVariant ConcreteEnumerableArg<QString>::value() const
-{
-    return mTranslatedRange.at(mArg.value);
-}
-
 template <typename T>
-QSharedPointer<EnumerableArg<T>> makeArg(const QString &name, const QString &unit, InitList<T, ArgType::Enumerable> &&list)
+QSharedPointer<EnumerableArg<T>> makeArg(const QString &name, const QString &unit, EnumerableInitList<T> &&list)
 {
     auto p = QSharedPointer<ConcreteEnumerableArg<T>>::create(std::forward<decltype(list)>(list));
     p->setName(name);
@@ -55,5 +42,5 @@ QSharedPointer<EnumerableArg<T>> makeArg(const QString &name, const QString &uni
     return std::move(p);
 }
 
-template QSharedPointer<EnumerableArg<QString>> makeArg(const QString &name, const QString &unit, InitList<QString, ArgType::Enumerable> &&list);
+template QSharedPointer<EnumerableArg<QString>> makeArg(const QString &name, const QString &unit, EnumerableInitList<QString> &&list);
 } // namespace DeviceArg

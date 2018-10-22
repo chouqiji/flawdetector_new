@@ -24,9 +24,10 @@ void SimpleInspector::setEditor(QWidget *editor)
 
 void SimpleInspector::activateEditor()
 {
+    constexpr int insertPostion = 1;
     ui->value->hide();
     mEditor->show();
-    ui->layout->insertWidget(1, mEditor);
+    ui->layout->insertWidget(insertPostion, mEditor);
 }
 
 void SimpleInspector::setValue(const QString &value)

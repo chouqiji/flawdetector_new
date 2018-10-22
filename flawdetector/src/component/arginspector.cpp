@@ -11,9 +11,9 @@ void ArgInspector::bind(ArgInspector::ArgPointer pArg, Converter converter)
     updateUnit(mArgPointer->displayedUnit());
     updateValue(mArgPointer->value());
 
-    mArgPointer->connect(&DeviceArg::Signals::valueChanged, this, &ArgInspector::updateValue);
-    mArgPointer->connect(&DeviceArg::Signals::nameChanged, this, &ArgInspector::updateName);
-    mArgPointer->connect(&DeviceArg::Signals::unitChanged, this, &ArgInspector::updateUnit);
+    connect(mArgPointer.data(), &DeviceArg::ViewPort::valueChanged, this, &ArgInspector::updateValue);
+    connect(mArgPointer.data(), &DeviceArg::ViewPort::nameChanged, this, &ArgInspector::updateName);
+    connect(mArgPointer.data(), &DeviceArg::ViewPort::unitChanged, this, &ArgInspector::updateUnit);
 }
 
 } // namespace
