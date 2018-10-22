@@ -1,8 +1,11 @@
 #include "globalmanager.h"
-#include <QHash>
 #include <QDebug>
 #include <QSettings>
-#include <QMutexLocker>
+#include <QHash>
+#include <QCoreApplication>
+#include <QTranslator>
+#include <devicearg/enumerablearg.h>
+#include <devicearg/numericarg.h>
 
 class ImplGlobalManager
 {
@@ -10,38 +13,24 @@ public:
     ImplGlobalManager(GlobalManager* parent);
     QSettings  mSettings{"set.ini", QSettings::IniFormat};
 
-private:
     using TokenType = QString;
+    using DictType = QHash<QString, QSharedPointer<DeviceArg::BasicViewPort>>;
 
+    DictType mDict;
+    QTranslator translator;
+
+private:
     GlobalManager* mPtrParent;
 };
 
 ImplGlobalManager::ImplGlobalManager(GlobalManager *parent) : mPtrParent{parent}
 {
-//    using namespace DeviceArg;
+    using namespace DeviceArg;
 
-//    DeviceArgInitList<QString> pww{"test",
-//              0,
-//              "unit",
-//              {"value1", "value2", "value3"},
-//              static_cast<CommitPolicy>(0),
-//              nullptr};
+    mDict["name"] = makeArg<QString>("name", "unit", {0,{0,1},{QT_TR_NOOP("name2"), "www"}, CommitPolicy::Immediate, nullptr});
 
-//    mDictionary["test"] =  makeEnumerableArg(
-//                            std::move(pww)
-//                           , mPtrParent);
-
-//    mDictionary["tfloat"] =  makeNumericArg<float>(
-//                            {QT_TR_NOOP("name2"),
-//                             1.0,
-//                             "unit",
-//                             {0.1f, 1.1f},
-//                             CommitPolicy::Immediate,
-//                             nullptr}
-//                           , mPtrParent);
-
-//    for(const auto& p : mDictionary)
-//        QObject::connect(p.data(), &IDeviceArgSignals::settingChanged, mPtrParent, &GlobalManager::updateSettings);
+    for(const auto& p : mDict)
+        QObject::connect(p.data(), &BasicViewPort::argChanged, mPtrParent, &GlobalManager::updateSettings);
 
 //    auto restriction = [&](){
 //        auto a = mDictionary["tfloat"].dynamicCast<IDeviceArg<float>>()->value();
@@ -67,6 +56,16 @@ GlobalManager* GlobalManager::instance()
     return &mInstance;
 }
 
+void GlobalManager::applyTranslation(const QString &translationFileName)
+{
+    pImpl->translator.load(translationFileName);
+    QCoreApplication::installTranslator(&pImpl->translator);
+
+    // retranslate
+    for(auto &ele: pImpl->mDict)
+        ele.dynamicCast<DeviceArg::BasicViewPort>()->retranslate();
+}
+
 void GlobalManager::updateSettings(const QString &s, const QVariant &v)
 {
     if(v.canConvert<QVariantList>())
@@ -75,13 +74,16 @@ void GlobalManager::updateSettings(const QString &s, const QVariant &v)
         pImpl->mSettings.setValue(s, v);
 }
 
-//template<typename T>
-//GlobalManager::DevArgPtr<T> GlobalManager::getDeviceArg(const QString &argToken)
-//{
-//    return pImpl->getDeviceArg(std::forward<const QString>(argToken)).dynamicCast<DeviceArg::IDeviceArg<T>>();
-//}
+template<typename T>
+GlobalManager::EnumArgPtr<T> GlobalManager::getEnumerableArg(const QString &argName)
+{
+    return pImpl->mDict[argName].dynamicCast<DeviceArg::EnumerableArg<T>>();
+}
 
-//// instantiation
-//template GlobalManager::DevArgPtr<QString> GlobalManager::getDeviceArg(const QString&);
-//template GlobalManager::DevArgPtr<int> GlobalManager::getDeviceArg(const QString&);
-//template GlobalManager::DevArgPtr<float> GlobalManager::getDeviceArg(const QString&);
+template<typename T>
+GlobalManager::NumArgPtr<T> GlobalManager::getNumericArg(const QString &argName)
+{
+    return pImpl->mDict[argName].dynamicCast<DeviceArg::NumericArg<T>>();
+}
+
+template GlobalManager::EnumArgPtr<QString> GlobalManager::getEnumerableArg(const QString &argName);

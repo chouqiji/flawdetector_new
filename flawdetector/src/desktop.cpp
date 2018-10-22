@@ -11,7 +11,12 @@ Desktop::Desktop(QWidget *parent)
     : QWidget(parent)
 {
     this->resize(800, 480);
-    auto p = DeviceArg::makeArg<QString>("name", "unit", {0,{0,1},{QT_TR_NOOP("name2"), "www"}, DeviceArg::CommitPolicy::Immediate, nullptr});
+    auto p = GlobalManager::instance()->getEnumerableArg<QString>("name");
+
+    QList<QSharedPointer<QObject>> list{p};
+    qDebug()<<list;
+    auto pcast = list.at(0).dynamicCast<DeviceArg::EnumerableArg<QString>>();
+    auto pcast2 = list.at(0).dynamicCast<DeviceArg::EnumerableArg<double>>();
 
     auto pw1 = new Component::SimpleInspector(this);
     auto pw2 = new Component::SimpleInspector(this);

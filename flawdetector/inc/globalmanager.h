@@ -3,6 +3,16 @@
 
 #include <QObject>
 
+namespace DeviceArg {
+
+template <typename T>
+class EnumerableArg;
+
+template <typename T>
+class NumericArg;
+
+}
+
 class ImplGlobalManager;
 
 class GlobalManager : public QObject
@@ -12,17 +22,22 @@ class GlobalManager : public QObject
 public:
     static GlobalManager* instance();
 
-//    template <typename T>
-//    using DevArgPtr = QSharedPointer<DeviceArg::IDeviceArg<T>>;
-//    template <typename T>
-//    DevArgPtr<T> getDeviceArg(const QString& argToken);
+    void applyTranslation(const QString & translationFileName);
+    void updateSettings(const QString&, const QVariant&);
+
+    template <typename T>
+    using EnumArgPtr = QSharedPointer<DeviceArg::EnumerableArg<T>>;
+    template <typename T>
+    using NumArgPtr = QSharedPointer<DeviceArg::NumericArg<T>>;
+    template <typename T>
+    EnumArgPtr<T> getEnumerableArg(const QString& argName);
+    template <typename T>
+    NumArgPtr<T> getNumericArg(const QString& argName);
 
 private:
     static GlobalManager mInstance;
 
     QScopedPointer<ImplGlobalManager> pImpl;
-
-    void updateSettings(const QString&, const QVariant&);
 
     GlobalManager();
     ~GlobalManager();

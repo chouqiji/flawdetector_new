@@ -23,6 +23,13 @@ public:
         emit nameChanged(mDisplayedName);
         emit argChanged(mName + "/name", name);
     }
+    virtual void retranslate()
+    {
+        mDisplayedUnit = QObject::tr(mUnit.toLatin1());
+        mDisplayedName = QObject::tr(mName.toLatin1());
+        emit unitChanged(mDisplayedUnit);
+        emit nameChanged(mDisplayedName);
+    }
 
 protected:
     QString mDisplayedName;

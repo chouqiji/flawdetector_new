@@ -1,14 +1,12 @@
 #include "desktop.h"
 #include <QApplication>
-#include <QTranslator>
+#include <globalmanager.h>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QTranslator translator;
-    translator.load(R"(C:\Users\joyqa\Documents\git\flawdetector\flawdetector\zh_cn.qm)");
-    a.installTranslator(&translator);
+    GlobalManager::instance()->applyTranslation(R"(C:\Users\joyqa\Documents\git\flawdetector\flawdetector\zh_cn.qm)");
 
     Desktop w;
     w.show();

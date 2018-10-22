@@ -63,6 +63,12 @@ public:
 
 // import from viewport
     virtual QVariant value() const override {return translateValue(mArg.value);}
+    virtual void retranslate() override {
+        translateList(mArg.list);
+        emit valueChanged(translateValue(mArg.value));
+
+        BasicViewPort::retranslate();
+    }
 
 private:
     EnumerableInitList<T> mArg;
