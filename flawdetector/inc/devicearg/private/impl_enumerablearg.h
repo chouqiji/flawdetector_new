@@ -2,7 +2,6 @@
 #define DEVICEARG_IMPL_ENUMERABLEARG_H
 
 #include "devicearg/enumerablearg.h"
-#include <utility>
 
 namespace DeviceArg {
 
