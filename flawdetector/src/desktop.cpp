@@ -6,6 +6,7 @@
 #include <QShortcut>
 #include <QComboBox>
 #include "devicearg/enumerablearg.h"
+#include "component/enumargeditor.h"
 
 Desktop::Desktop(QWidget *parent)
     : QWidget(parent)
@@ -13,22 +14,14 @@ Desktop::Desktop(QWidget *parent)
     this->resize(800, 480);
     auto p = GlobalManager::instance()->getEnumerableArg<QString>("name");
 
-    QList<QSharedPointer<QObject>> list{p};
-    qDebug()<<list;
-    auto pcast = list.at(0).dynamicCast<DeviceArg::EnumerableArg<QString>>();
-    auto pcast2 = list.at(0).dynamicCast<DeviceArg::EnumerableArg<double>>();
-
     auto pw1 = new Component::SimpleInspector(this);
     auto pw2 = new Component::SimpleInspector(this);
 
     pw1->bind(p);
     pw2->bind(p, [](const QVariant& in){return in.toString().append("233");});
 
-    auto pe = new QComboBox;
-    for(const auto &ele : p->list())
-        pe->addItem(ele.toString());
-    connect(pe, static_cast<void (QComboBox::*)(const int)>(&QComboBox::currentIndexChanged), std::bind(&DeviceArg::EnumerableArg<QString>::setIndex, p, std::placeholders::_1));
-
+    auto pe = new Component::EnumArgEditor;
+    pe->bind(p);
     auto pl = new QBoxLayout(QBoxLayout::TopToBottom, this);
     pl->addWidget(pw1);
     pl->addWidget(pw2);

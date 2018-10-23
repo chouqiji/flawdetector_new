@@ -17,17 +17,17 @@ SimpleInspector::~SimpleInspector()
 
 void SimpleInspector::setEditor(QWidget *editor)
 {
+    // FIXME: multiple call of this function will cause memory leakage
     mEditor = editor;
-    mEditor->setParent(this);
-    mEditor->hide();
+    mEditor->setParent(ui->value);
+    auto p = new QBoxLayout(QBoxLayout::LeftToRight, ui->value);
+    p->addWidget(mEditor);
+    p->setContentsMargins(0, 0, 0, 0);
 }
 
 void SimpleInspector::activateEditor()
 {
-    constexpr int insertPostion = 1;
-    ui->value->hide();
     mEditor->show();
-    ui->layout->insertWidget(insertPostion, mEditor);
 }
 
 void SimpleInspector::setValue(const QString &value)

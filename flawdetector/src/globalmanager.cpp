@@ -27,7 +27,7 @@ ImplGlobalManager::ImplGlobalManager(GlobalManager *parent) : mPtrParent{parent}
 {
     using namespace DeviceArg;
 
-    mDict["name"] = makeArg<QString>("name", "unit", {0,{0,1},{QT_TR_NOOP("name2"), "www"}, CommitPolicy::Immediate, nullptr});
+    mDict["name"] = makeArg<QString>("name", "unit", {1,{1,2},{QT_TR_NOOP("name2"), "www", "hhh"}, CommitPolicy::Immediate, nullptr});
 
     for(const auto& p : mDict)
         QObject::connect(p.data(), &BasicViewPort::argChanged, mPtrParent, &GlobalManager::updateSettings);
