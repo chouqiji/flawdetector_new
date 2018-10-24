@@ -8,12 +8,16 @@
 
 namespace Component {
 
-EnumArgEditor::EnumArgEditor(QWidget *parent)
+EnumArgEditor::EnumArgEditor(ArgPointer arg, QWidget *parent, Converter converter)
     : QWidget{parent},
       text{new QLabel{this}},
       popup{new QListWidget{this}}
 {
-    constexpr int padding = 8;
+//    move(parent->pos());
+    setAttribute(Qt::WA_DeleteOnClose);
+    mArg = arg;
+    mConverter = converter;
+    constexpr int padding = 50;
     auto p = new QBoxLayout{QBoxLayout::LeftToRight, this};
     p->addWidget(text);
     p->setContentsMargins(0, 0, 0, 0);
@@ -22,9 +26,8 @@ EnumArgEditor::EnumArgEditor(QWidget *parent)
     popup->setWindowFlags(Qt::Popup);
     popup->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContentsOnFirstShow);
 
-
+    resize(parent->size());
     connect(popup, &QListWidget::currentTextChanged, text, &QLabel::setText);
-    hide();
 }
 
 void EnumArgEditor::bind(EnumArgEditor::ArgPointer arg, Converter converter)
@@ -63,7 +66,7 @@ void EnumArgEditor::keyPressEvent(QKeyEvent *e)
     case Qt::Key_Return:
         mArg->setValue(popup->currentRow() + mLower);
         releaseKeyboard();
-        hide();
+        close();
         break;
     default:
         QWidget::keyPressEvent(e);
@@ -88,15 +91,15 @@ void EnumArgEditor::showEvent(QShowEvent *)
 
     popup->move(mapToGlobal(text->geometry().bottomLeft()));
 
-    setStyleSheet("background: gray");
+//    setStyleSheet("background: gray");
+    setStyleSheet(".QLabel{ background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(0, 0, 0, 0), stop:0.5 rgba(0, 0, 0, 127), stop:1 rgba(0, 0, 0, 0));}");
 
-    popup->show();
+//    popup->hide();
     grabKeyboard();
 }
 
 void EnumArgEditor::hideEvent(QHideEvent *)
 {
-    popup->hide();
     releaseKeyboard();
 }
 

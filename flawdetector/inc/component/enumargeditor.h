@@ -14,10 +14,9 @@ class EnumArgEditor : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EnumArgEditor(QWidget *parent = nullptr);
-
     using ArgPointer = QSharedPointer<DeviceArg::EnumerableEditPort>;
 
+    explicit EnumArgEditor(ArgPointer arg, QWidget *parent = nullptr, Converter converter = defaultConverter);
     void bind(ArgPointer arg, Converter converter = defaultConverter);
 
 protected:

@@ -2,10 +2,11 @@
 
 namespace Component {
 
-void ArgInspector::bind(ArgInspector::ArgPointer pArg, Converter converter)
+void ArgInspector::bind(ArgInspector::ArgPointer pArg, EditorCreator creator, Converter converter)
 {
     mArgPointer = pArg;
     mConverter = converter;
+    mCreator = creator;
 
     updateName(mArgPointer->displayedName());
     updateUnit(mArgPointer->displayedUnit());

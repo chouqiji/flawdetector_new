@@ -16,8 +16,7 @@ public:
     virtual ~ArgInspector() = default;
 
     using ArgPointer = QSharedPointer<DeviceArg::ViewPort>;
-    void bind(ArgPointer pArg, Converter converter = defaultConverter);
-    virtual void setEditor(QWidget*) {}
+    void bind(ArgPointer pArg, EditorCreator creator = nullptr, Converter converter = defaultConverter);
     virtual void activateEditor() {}
 
 protected:
@@ -27,7 +26,7 @@ protected:
 
     Converter mConverter;
     ArgPointer mArgPointer;
-    QWidget *mEditor;
+    EditorCreator mCreator = nullptr;
 
 private:
     void updateValue(const QVariant& val) {setValue(mConverter(val));}

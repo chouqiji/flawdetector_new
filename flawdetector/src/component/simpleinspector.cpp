@@ -15,19 +15,10 @@ SimpleInspector::~SimpleInspector()
     delete ui;
 }
 
-void SimpleInspector::setEditor(QWidget *editor)
-{
-    // FIXME: multiple call of this function will cause memory leakage
-    mEditor = editor;
-    mEditor->setParent(ui->value);
-    auto p = new QBoxLayout(QBoxLayout::LeftToRight, ui->value);
-    p->addWidget(mEditor);
-    p->setContentsMargins(0, 0, 0, 0);
-}
-
 void SimpleInspector::activateEditor()
 {
-    mEditor->show();
+    if(mCreator != nullptr)
+        mCreator(ui->value)->show();
 }
 
 void SimpleInspector::setValue(const QString &value)
