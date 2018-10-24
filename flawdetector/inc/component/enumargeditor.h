@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "component/common.h"
 #include "devicearg/editport.h"
+#include "component/itemwheel.h"
 
 class QListWidget;
 class QLabel;
@@ -31,8 +32,8 @@ protected:
     qint32 mLower;
 
 private:
-    QLabel *text;
-    QListWidget *popup;
+    QLabel *mText;
+    ItemWheel *mPopup;
 };
 
 }

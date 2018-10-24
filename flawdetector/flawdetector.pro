@@ -33,7 +33,8 @@ SOURCES += \
     src/devicearg/impl_enumerablearg.cpp \
     src/component/simpleinspector.cpp \
     src/devicearg/impl_numericarg.cpp \
-    src/component/enumargeditor.cpp
+    src/component/enumargeditor.cpp \
+    src/component/itemwheel.cpp
 
 HEADERS += \
         inc/desktop.h \
@@ -48,7 +49,8 @@ HEADERS += \
     inc/devicearg/numericarg.h \
     inc/devicearg/private/impl_numericarg.h \
     inc/component/enumargeditor.h \
-    inc/component/common.h
+    inc/component/common.h \
+    inc/component/itemwheel.h
 
 QMAKE_CXXFLAGS -= -std=gnu++11 -std=std++11
 QMAKE_CXXFLAGS *= -std=gnu++17
