@@ -1,10 +1,29 @@
 #include "component/enumargeditor.h"
+#include <QComboBox>
 #include <QKeyEvent>
+#include <QListWidget>
+#include <QtConcurrent/QtConcurrentMap>
+#include <QLabel>
+#include <QBoxLayout>
 
 namespace Component {
 
-EnumArgEditor::EnumArgEditor(QWidget *parent) : QComboBox(parent)
+EnumArgEditor::EnumArgEditor(QWidget *parent)
+    : QWidget{parent},
+      text{new QLabel{this}},
+      popup{new QListWidget{this}}
 {
+    constexpr int padding = 8;
+    auto p = new QBoxLayout{QBoxLayout::LeftToRight, this};
+    p->addWidget(text);
+    p->setContentsMargins(0, 0, 0, 0);
+    text->setFixedHeight(text->fontMetrics().height() + padding);
+    popup->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    popup->setWindowFlags(Qt::Popup);
+    popup->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContentsOnFirstShow);
+
+
+    connect(popup, &QListWidget::currentTextChanged, text, &QLabel::setText);
     hide();
 }
 
@@ -20,23 +39,29 @@ void EnumArgEditor::keyPressEvent(QKeyEvent *e)
     {
     case Qt::Key_Plus:
     {
-        auto idx = currentIndex() + 1 == count() ? currentIndex() : currentIndex() + 1;
-        setCurrentIndex(idx);
+        auto idx = popup->currentRow() + 1 == popup->count() ?
+                   0 : popup->currentRow() + 1;
+        popup->setCurrentRow(idx);
         if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
-            mArg->setValue(currentIndex() + mLower);
+            mArg->setValue(popup->currentRow() + mLower);
+
+        popup->scrollToItem(popup->currentItem(), QAbstractItemView::PositionAtCenter);
         break;
     }
     case Qt::Key_Minus:
     {
-        auto idx = currentIndex() - 1 < 0 ? 0 : currentIndex() - 1;
-        setCurrentIndex(idx);
+        auto idx = popup->currentRow() - 1 < 0 ?
+                    popup->count() - 1 : popup->currentRow() - 1;
+        popup->setCurrentRow(idx);
         if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
-            mArg->setValue(currentIndex() + mLower);
+            mArg->setValue(popup->currentRow() + mLower);
+
+        popup->scrollToItem(popup->currentItem(), QAbstractItemView::PositionAtCenter);
         break;
     }
     case Qt::Key_Enter:
     case Qt::Key_Return:
-        mArg->setValue(currentIndex() + mLower);
+        mArg->setValue(popup->currentRow() + mLower);
         releaseKeyboard();
         hide();
         break;
@@ -51,13 +76,38 @@ void EnumArgEditor::showEvent(QShowEvent *)
     auto range = mArg->range();
     mLower = range.first;
     const auto& list = mArg->list();
-    clear();
+    popup->clear();
+
+    auto translated = QtConcurrent::blockingMapped(list, mConverter);
     for(int i = mLower; i <= range.second; ++i)
     {
-        addItem(mConverter(list[i]));
+        popup->addItem(translated[i]);
     }
-    setCurrentIndex(mArg->currentValue() - mLower);
+
+    popup->setCurrentRow(mArg->currentValue() - mLower);
+
+    popup->move(mapToGlobal(text->geometry().bottomLeft()));
+
+    setStyleSheet("background: gray");
+
+    popup->show();
     grabKeyboard();
+}
+
+void EnumArgEditor::hideEvent(QHideEvent *)
+{
+    popup->hide();
+    releaseKeyboard();
+}
+
+void EnumArgEditor::resizeEvent(QResizeEvent *)
+{
+    popup->setFixedWidth(text->geometry().width());
+}
+
+void EnumArgEditor::moveEvent(QMoveEvent *)
+{
+    popup->move(mapToGlobal(text->geometry().bottomLeft()));
 }
 
 }
