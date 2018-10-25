@@ -29,6 +29,9 @@ ImplGlobalManager::ImplGlobalManager(GlobalManager *parent) : mPtrParent{parent}
 
     mDict["name"] = makeArg<QString>("name", "unit", {1,{1,6},{QT_TR_NOOP("name2"), "www", "hhh", "aaa", "bbb", "ccc", "ddd"}, CommitPolicy::Immediate, nullptr});
 
+    mDict["gain"] = makeArg<int>("gain","dB",{200,{100,600},CommitPolicy::Immediate, nullptr});
+
+    mDict["range"] = makeArg<double>("range","mm",{200.2,{100.1,600.6},CommitPolicy::Immediate, nullptr});
     for(const auto& p : mDict)
         QObject::connect(p.data(), &BasicViewPort::argChanged, mPtrParent, &GlobalManager::updateSettings);
 
@@ -87,3 +90,5 @@ GlobalManager::NumArgPtr<T> GlobalManager::getNumericArg(const QString &argName)
 }
 
 template GlobalManager::EnumArgPtr<QString> GlobalManager::getEnumerableArg(const QString &argName);
+template GlobalManager::NumArgPtr<int> GlobalManager::getNumericArg(const QString &argName);
+template GlobalManager::NumArgPtr<double> GlobalManager::getNumericArg(const QString &argName);

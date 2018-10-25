@@ -21,6 +21,10 @@ public:
     virtual void createEditor() override;
     virtual void closeEditor() override;
 
+    void actEditor();
+
+    void actdoubleEditor();
+
 protected:
     virtual void setValue(const QString& value) override;
     virtual void setName(const QString& name) override;
