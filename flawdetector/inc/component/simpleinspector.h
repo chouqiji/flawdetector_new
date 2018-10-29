@@ -18,7 +18,8 @@ public:
     explicit SimpleInspector(QWidget *parent = nullptr);
     ~SimpleInspector() override;
 
-    virtual void activateEditor() override;
+    virtual void createEditor() override;
+    virtual void closeEditor() override;
 
 protected:
     virtual void setValue(const QString& value) override;
@@ -27,6 +28,7 @@ protected:
 
 private:
     Ui::SimpleInspector *ui;
+    QWidget *mEditor;
 };
 
 }

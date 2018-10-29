@@ -17,4 +17,24 @@ void ArgInspector::bind(ArgInspector::ArgPointer pArg, EditorCreator creator, Co
     connect(mArgPointer.data(), &DeviceArg::ViewPort::unitChanged, this, &ArgInspector::updateUnit);
 }
 
+void ArgInspector::focusInEvent(QFocusEvent *)
+{
+    // show editor
+    createEditor();
+}
+
+void ArgInspector::focusOutEvent(QFocusEvent *)
+{
+    // close editor
+    closeEditor();
+}
+
+void ArgInspector::setFocus()
+{
+    if(hasFocus())
+        clearFocus();
+    else
+        QWidget::setFocus();
+}
+
 } // namespace

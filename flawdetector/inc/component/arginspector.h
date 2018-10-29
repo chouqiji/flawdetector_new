@@ -1,28 +1,33 @@
 #ifndef ARGINSPECTOR_H
 #define ARGINSPECTOR_H
 
-#include <QWidget>
+#include <QFrame>
 #include "component/common.h"
 #include "devicearg/viewport.h"
 
 namespace Component
 {
 
-class ArgInspector : public QWidget
+class ArgInspector : public QFrame
 {
     Q_OBJECT
 public:
-    explicit ArgInspector(QWidget* parent) : QWidget{parent} {}
-    virtual ~ArgInspector() = default;
+    explicit ArgInspector(QWidget* parent) : QFrame{parent} {}
+    virtual ~ArgInspector() override = default;
 
     using ArgPointer = QSharedPointer<DeviceArg::ViewPort>;
     void bind(ArgPointer pArg, EditorCreator creator = nullptr, Converter converter = defaultConverter);
-    virtual void activateEditor() {}
+    void setFocus();
 
 protected:
     virtual void setValue(const QString&) {}
     virtual void setName(const QString&) {}
     virtual void setUnit(const QString&) {}
+    virtual void focusInEvent(QFocusEvent *) override;
+    virtual void focusOutEvent(QFocusEvent *) override;
+
+    virtual void createEditor() {}
+    virtual void closeEditor() {}
 
     Converter mConverter;
     ArgPointer mArgPointer;

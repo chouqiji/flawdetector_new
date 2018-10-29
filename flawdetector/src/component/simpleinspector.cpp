@@ -15,10 +15,22 @@ SimpleInspector::~SimpleInspector()
     delete ui;
 }
 
-void SimpleInspector::activateEditor()
+void SimpleInspector::createEditor()
 {
     if(mCreator != nullptr)
-        mCreator(ui->value)->show();
+    {
+        mEditor = mCreator(ui->value);
+        mEditor->show();
+        connect(mEditor, &QWidget::destroyed, this, &QWidget::clearFocus);
+    }
+}
+
+void SimpleInspector::closeEditor()
+{
+    if(mEditor != nullptr)
+    {
+        mEditor->close();
+    }
 }
 
 void SimpleInspector::setValue(const QString &value)

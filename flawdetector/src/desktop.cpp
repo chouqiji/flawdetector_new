@@ -27,7 +27,7 @@ Desktop::Desktop(QWidget *parent)
     pl->addWidget(pw2);
 
     auto psc = new QShortcut(Qt::Key_F1, pw1);
-    connect(psc, &QShortcut::activated, pw1, &Component::SimpleInspector::activateEditor);
+    connect(psc, &QShortcut::activated, pw1, &Component::SimpleInspector::setFocus);
 }
 
 Desktop::~Desktop()
