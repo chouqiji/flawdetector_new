@@ -14,14 +14,12 @@ EnumArgEditor::EnumArgEditor(ArgPointer arg, QWidget *parent, Converter converte
     setAttribute(Qt::WA_DeleteOnClose);
     mArg = arg;
     mConverter = converter;
-    constexpr int padding = 50;
+
     auto p = new QBoxLayout{QBoxLayout::LeftToRight, this};
     p->addWidget(mText);
     p->setContentsMargins(0, 0, 0, 0);
-    mText->setFixedHeight(mText->fontMetrics().height() + padding);
-    mPopup->setWindowFlag(Qt::Popup);
+    mText->setFixedHeight(mText->fontMetrics().lineSpacing());
 
-    resize(parent->size());
     connect(mPopup, &ItemWheel::currentTextChanged, mText, &QLabel::setText);
 }
 
@@ -54,7 +52,6 @@ void EnumArgEditor::keyPressEvent(QKeyEvent *e)
     case Qt::Key_Enter:
     case Qt::Key_Return:
         mArg->setValue(mPopup->currentIndex() + mLower);
-        releaseKeyboard();
         close();
         break;
     default:
@@ -69,14 +66,14 @@ void EnumArgEditor::showEvent(QShowEvent *)
     mLower = range.first;
     const auto& list = mArg->list();
 
+    resize(parentWidget()->size());
+
     auto translated = QtConcurrent::blockingMapped(list, mConverter);
     mPopup->setList(subset(translated, mLower, range.second));
 
     mPopup->setIndex(mArg->currentValue() - mLower);
 
     mPopup->move(mapToGlobal(mText->geometry().bottomLeft()));
-
-    setStyleSheet(".QLabel{ background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(0, 0, 0, 0), stop:0.5 rgba(0, 0, 0, 127), stop:1 rgba(0, 0, 0, 0));}");
 
     mPopup->show();
     grabKeyboard();
@@ -85,6 +82,7 @@ void EnumArgEditor::showEvent(QShowEvent *)
 void EnumArgEditor::hideEvent(QHideEvent *)
 {
     releaseKeyboard();
+    mPopup->hide();
 }
 
 void EnumArgEditor::resizeEvent(QResizeEvent *)

@@ -1,23 +1,24 @@
 #ifndef COMPONENT_ITEMWHEEL_H
 #define COMPONENT_ITEMWHEEL_H
 
-#include <QWidget>
-
-class QLabel;
+#include <QScrollArea>
 
 namespace Component {
 
-class ItemWheel : public QWidget
+class ItemWheel : public QScrollArea
 {
     Q_OBJECT
 public:
-    explicit ItemWheel(int count, QWidget *parent = nullptr);
-    ~ItemWheel();
+    explicit ItemWheel(int viewportSize, QWidget *parent = nullptr);
+    ~ItemWheel() override;
     void selectNext();
     void selectPrev();
-    int currentIndex();
+    int currentIndex() const;
     void setIndex(int index);
     void setList(const QStringList & list);
+
+protected:
+    virtual void showEvent(QShowEvent *) override;
 
 signals:
     void currentTextChanged(const QString&);

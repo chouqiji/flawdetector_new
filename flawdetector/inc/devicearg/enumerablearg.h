@@ -26,6 +26,8 @@ public:
 template <typename T>
 QSharedPointer<EnumerableArg<T>> makeArg(const QString &name, const QString &unit, EnumerableInitList<T> &&);
 
+extern template QSharedPointer<EnumerableArg<QString>> makeArg(const QString &name, const QString &unit, EnumerableInitList<QString> &&list);
+
 }
 
 #endif // ENUMERABLEARG_H
