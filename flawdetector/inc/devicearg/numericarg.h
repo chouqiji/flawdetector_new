@@ -30,6 +30,9 @@ template <typename T>
 typename std::enable_if<is_numeric<T>::value,
 QSharedPointer<NumericArg<T>>>::type makeArg(const QString &name, const QString &unit, NumericInitList<T> &&);
 
+extern template QSharedPointer<NumericArg<int>> makeArg<int>(const QString &name, const QString &unit, NumericInitList<int> &&list);
+extern template QSharedPointer<NumericArg<double>> makeArg<double>(const QString &name, const QString &unit, NumericInitList<double> &&list);
+
 }
 
 #endif // NUMERICARG_H
