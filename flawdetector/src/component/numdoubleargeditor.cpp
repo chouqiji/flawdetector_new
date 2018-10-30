@@ -16,13 +16,15 @@ NumDoubleArgEditor::NumDoubleArgEditor(ArgPointer arg, QWidget *parent)
     auto p = new QBoxLayout{QBoxLayout::LeftToRight, this};
     p->addWidget(mText);
     num_double=mText->text().toDouble();
-
     num_double=mArg->currentValue();
-    mText->setText(QString::number(num_double));
+    auto range = mArg->range();
+    maxLen = QString::number(range.second).length();
+    mText->setText(QString::number(num_double,'f',1).rightJustified(maxLen,' '));
+
     grabKeyboard();
     mText->setTextInteractionFlags(Qt::TextSelectableByKeyboard);
+    cursor_pos=mText->text().length()-1;
     mText->setSelection(cursor_pos,1);
-
     p->setContentsMargins(0, 0, 0, 0);
     resize(parent->size());
 
@@ -36,70 +38,40 @@ void NumDoubleArgEditor::bind(NumDoubleArgEditor::ArgPointer arg)
 
 void NumDoubleArgEditor::keyPressEvent(QKeyEvent *e)
 {
-    auto num=QString::number(num_double,'f',1);
-    auto num_todouble=num.toDouble();
+    int modifier;
+    if(e->key() == Qt::Key_Plus)
+        modifier = calculateStep(cursor_pos);
+    else if(e->key() == Qt::Key_Minus)
+        modifier = -calculateStep(cursor_pos);
+    double size_upper = mArg.data()->range().second;
+    int upper_value = QString::number(size_upper).size();
+    double size_lower = mArg->currentValue();
+    int lower_value = QString::number(size_lower).size();
+    int bit = upper_value - lower_value;
+
+
     switch(e->key())
     {
     case Qt::Key_Plus:
-    {
-        if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
-        {
-            switch (cursor_pos) {
-            case 0:
-            {num_double += 100;}
-                break;
-            case 1:
-            {num_double += 10;}
-                break;
-            case 2:
-            {num_double++;}
-                break;
-            case 4:
-            {num_double += 0.1;}
-            default:
-                break;
-            }
-            if(num_double>mArg.data()->range().second)
-                num_double=mArg.data()->range().second;
-            mArg->setValue(num_todouble);
-            mText->setText(QString::number(num_double,'f',1));
-            mText->setSelection(cursor_pos,1);
-        }
-        break;
-    }
     case Qt::Key_Minus:
     {
-        if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
-        {
-            switch (cursor_pos) {
-            case 0:
-            {num_double -= 100;}
-                break;
-            case 1:
-            {num_double -= 10;}
-                break;
-            case 2:
-            {num_double--;}
-                break;
-            case 4:
-            {num_double -= 0.1;}
-            default:
-                break;
-            }
-            if(num_double<mArg.data()->range().first)
-                num_double=mArg.data()->range().first;
-            mArg->setValue(num_todouble);
-            mText->setText(QString::number(num_double,'f',1));
-            mText->setSelection(cursor_pos,1);
-        }
+        num_double=mText->text().toDouble()+modifier;
+
+        if(num_double>mArg->range().second)
+            num_double=mArg->range().second;
+        if(num_double<mArg->range().first)
+            num_double=mArg->range().first;
+        mArg->setValue(num_double);
+        mText->setText(QString::number(num_double,'f',1).rightJustified(maxLen,' '));
+        mText->setSelection(cursor_pos,1);
         break;
     }
+
     case Qt::Key_Asterisk:
     {
-        if(cursor_pos>mText->text().size()-2)
-            cursor_pos=0;
-        else
-            cursor_pos++;
+        cursor_pos++;
+        if(cursor_pos>mText->text().size()-1)
+            cursor_pos=bit;
         if(mText->text().at(cursor_pos)==QChar('.'))
         {
             cursor_pos++;
@@ -121,6 +93,15 @@ void NumDoubleArgEditor::keyPressEvent(QKeyEvent *e)
     }
 }
 
+int NumDoubleArgEditor::calculateStep(int cursor_step)
+{
+//    QString max_len(maxLen, '0');
+//    QString update_val = max_len.replace(cursor_step,1,'1');
 
+//    double modifier_val = update_val.toDouble();
+
+//    return modifier_val;
+
+}
 
 }

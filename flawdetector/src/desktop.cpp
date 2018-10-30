@@ -39,14 +39,14 @@ Desktop::Desktop(QWidget *parent)
     pw_gain->bind(p_gain, [p_gain](auto in){return new Component::NumeArgEditor(p_gain, in);});
     pl->addWidget(pw_gain);
     auto psc_gain = new QShortcut(Qt::Key_F2,pw_gain);
-    connect(psc_gain,&QShortcut::activated,pw_gain,&Component::SimpleInspector::activateEditor);
+    connect(psc_gain,&QShortcut::activated,pw_gain,&Component::SimpleInspector::setFocus);
 
     auto p_range = GlobalManager::instance()->getNumericArg<double>("range");
     auto pw_range = new Component::SimpleInspector(this);
     pw_range->bind(p_range,[p_range](auto in_double){return new Component::NumDoubleArgEditor(p_range, in_double);});
     pl->addWidget(pw_range);
     auto psc_range = new QShortcut(Qt::Key_F3,pw_range);
-    connect(psc_range,&QShortcut::activated,pw_range,&Component::SimpleInspector::activateEditor);
+    connect(psc_range,&QShortcut::activated,pw_range,&Component::SimpleInspector::setFocus);
 
 }
 

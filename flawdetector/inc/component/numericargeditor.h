@@ -26,9 +26,10 @@ protected:
 
 private:
     QLabel *mText;
-
-    int cursor_pos=0;
-    int num_length;
+    int cursor_pos;
+    int num_int;
+    int calculateStep(int cursor_step);
+    int maxLen;
 };
 
 }

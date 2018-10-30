@@ -3,8 +3,7 @@
 #include <QtConcurrent/QtConcurrentMap>
 #include <QLabel>
 #include <QBoxLayout>
-#include <QDebug>
-
+#include <QString>
 namespace Component {
 
 NumeArgEditor::NumeArgEditor(ArgPointer arg, QWidget *parent)
@@ -17,10 +16,13 @@ NumeArgEditor::NumeArgEditor(ArgPointer arg, QWidget *parent)
     auto p = new QBoxLayout{QBoxLayout::LeftToRight, this};
     p->addWidget(mText);
 
-    num_length=mArg->currentValue();
-    mText->setText(QString::number(num_length));
+    num_int=mArg->currentValue();
+    auto range = mArg->range();
+    maxLen = QString::number(range.second).length();
+    mText->setText(QString::number(num_int).rightJustified(maxLen,' '));
     grabKeyboard();
     mText->setTextInteractionFlags(Qt::TextSelectableByKeyboard);
+    cursor_pos=mText->text().length()-1;
     mText->setSelection(cursor_pos,1);
 
     p->setContentsMargins(0, 0, 0, 0);
@@ -36,69 +38,38 @@ void NumeArgEditor::bind(NumeArgEditor::ArgPointer arg)
 
 void NumeArgEditor::keyPressEvent(QKeyEvent *e)
 {
-//    qDebug("keypressed");
-//    qDebug()<<mText->selectedText();
-//    qDebug()<<cursor_pos;
+    int modifier;
+    if(e->key() == Qt::Key_Plus)
+        modifier = calculateStep(cursor_pos);
+    else if(e->key() == Qt::Key_Minus)
+        modifier = -calculateStep(cursor_pos);
+    int size_upper = mArg.data()->range().second;
+    int upper_value = QString::number(size_upper).size();
+    int size_lower = mArg->currentValue();
+    int lower_value = QString::number(size_lower).size();
+    int bit = upper_value - lower_value;
     switch(e->key())
     {
     case Qt::Key_Plus:
-    {
-        if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
-        {
-            switch (cursor_pos) {
-            case 0:
-            {num_length += 100;}
-                break;
-            case 1:
-            {num_length += 10;}
-                break;
-            case 2:
-            {num_length++;}
-                break;
-            default:
-                break;
-            }
-            if(num_length>mArg.data()->range().second)
-                num_length=mArg.data()->range().second;
-            mArg->setValue(num_length);
-            mText->setText(QString::number(num_length));
-            mText->setSelection(cursor_pos,1);
-        }
-        break;
-    }
     case Qt::Key_Minus:
     {
-        if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
-        {
-            switch (cursor_pos) {
-            case 0:
-            {num_length -= 100;}
-                break;
-            case 1:
-            {num_length -= 10;}
-                break;
-            case 2:
-            {num_length--;}
-                break;
-            default:
-                break;
-            }
-            if(num_length<mArg.data()->range().first)
-                num_length=mArg.data()->range().first;
-            mArg->setValue(num_length);
-            mText->setText(QString::number(num_length));
-            mText->setSelection(cursor_pos,1);
-        }
+        num_int=mText->text().toInt()+modifier;
+        if(num_int>mArg->range().second)
+            num_int=mArg->range().second;
+        if(num_int<mArg->range().first)
+            num_int=mArg->range().first;
+        mArg->setValue(num_int);
+        mText->setText(QString::number(num_int).rightJustified(maxLen,' '));
+        mText->setSelection(cursor_pos,1);
         break;
     }
     case Qt::Key_Asterisk:
     {
-        if(cursor_pos>mText->text().size()-2)
-            cursor_pos=0;
-        else
-            cursor_pos++;
-
+        cursor_pos++;
+        if(cursor_pos>(mText->text().size()-1))
+            cursor_pos=bit;
         mText->setSelection(cursor_pos,1);
+        qDebug()<<cursor_pos;
         break;
     }
 
@@ -112,7 +83,14 @@ void NumeArgEditor::keyPressEvent(QKeyEvent *e)
         break;
     }
 }
-
+int NumeArgEditor::calculateStep(int cursor_step)
+{
+    QString max_len(maxLen, '0');
+    QString update_val = max_len.replace(cursor_step,1,'1');
+    int modifier_val = update_val.toInt();
+    qDebug()<<modifier_val;
+    return modifier_val;
+}
 
 
 }

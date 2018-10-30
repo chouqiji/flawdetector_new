@@ -28,6 +28,10 @@ private:
     QLabel *mText;
     double num_double;
     int cursor_pos=0;
+    QString num;
+    double num_todouble;
+    int calculateStep(int cursor_step);
+    int maxLen;
 };
 
 }
