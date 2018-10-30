@@ -34,7 +34,7 @@ SOURCES += \
     src/component/simpleinspector.cpp \
     src/devicearg/impl_numericarg.cpp \
     src/component/enumargeditor.cpp \
-    src/component/private/itemwheel.cpp
+    src/component/private/itemwheel.cpp \
     src/component/numericargeditor.cpp \
     src/component/numdoubleargeditor.cpp
 
@@ -52,7 +52,7 @@ HEADERS += \
     inc/devicearg/private/impl_numericarg.h \
     inc/component/enumargeditor.h \
     inc/component/common.h \
-    inc/component/private/itemwheel.h
+    inc/component/private/itemwheel.h \
     inc/component/numericargeditor.h \
     inc/component/numdoubleargeditor.h
 
