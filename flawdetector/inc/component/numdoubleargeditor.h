@@ -26,7 +26,7 @@ protected:
 
 private:
     QLabel *mText;
-    int num_double;
+    double num_double;
     int cursor_pos=0;
 };
 

@@ -36,17 +36,33 @@ void NumeArgEditor::bind(NumeArgEditor::ArgPointer arg)
 
 void NumeArgEditor::keyPressEvent(QKeyEvent *e)
 {
-    qDebug("keypressed");
-    qDebug()<<mText->selectedText();
+//    qDebug("keypressed");
+//    qDebug()<<mText->selectedText();
+//    qDebug()<<cursor_pos;
     switch(e->key())
     {
     case Qt::Key_Plus:
     {
         if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
         {
-            num_length++;
+            switch (cursor_pos) {
+            case 0:
+            {num_length += 100;}
+                break;
+            case 1:
+            {num_length += 10;}
+                break;
+            case 2:
+            {num_length++;}
+                break;
+            default:
+                break;
+            }
+            if(num_length>mArg.data()->range().second)
+                num_length=mArg.data()->range().second;
             mArg->setValue(num_length);
             mText->setText(QString::number(num_length));
+            mText->setSelection(cursor_pos,1);
         }
         break;
     }
@@ -54,9 +70,24 @@ void NumeArgEditor::keyPressEvent(QKeyEvent *e)
     {
         if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
         {
-            num_length--;
+            switch (cursor_pos) {
+            case 0:
+            {num_length -= 100;}
+                break;
+            case 1:
+            {num_length -= 10;}
+                break;
+            case 2:
+            {num_length--;}
+                break;
+            default:
+                break;
+            }
+            if(num_length<mArg.data()->range().first)
+                num_length=mArg.data()->range().first;
             mArg->setValue(num_length);
             mText->setText(QString::number(num_length));
+            mText->setSelection(cursor_pos,1);
         }
         break;
     }

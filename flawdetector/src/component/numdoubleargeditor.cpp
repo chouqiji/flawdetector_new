@@ -3,7 +3,7 @@
 #include <QtConcurrent/QtConcurrentMap>
 #include <QLabel>
 #include <QBoxLayout>
-
+#include <QDebug>
 namespace Component {
 
 NumDoubleArgEditor::NumDoubleArgEditor(ArgPointer arg, QWidget *parent)
@@ -16,8 +16,6 @@ NumDoubleArgEditor::NumDoubleArgEditor(ArgPointer arg, QWidget *parent)
     auto p = new QBoxLayout{QBoxLayout::LeftToRight, this};
     p->addWidget(mText);
     num_double=mText->text().toDouble();
-
-
 
     num_double=mArg->currentValue();
     mText->setText(QString::number(num_double));
@@ -38,19 +36,62 @@ void NumDoubleArgEditor::bind(NumDoubleArgEditor::ArgPointer arg)
 
 void NumDoubleArgEditor::keyPressEvent(QKeyEvent *e)
 {
+    auto num=QString::number(num_double,'f',1);
+    auto num_todouble=num.toDouble();
     switch(e->key())
     {
     case Qt::Key_Plus:
     {
         if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
-            mArg->setValue(num_double);
+        {
+            switch (cursor_pos) {
+            case 0:
+            {num_double += 100;}
+                break;
+            case 1:
+            {num_double += 10;}
+                break;
+            case 2:
+            {num_double++;}
+                break;
+            case 4:
+            {num_double += 0.1;}
+            default:
+                break;
+            }
+            if(num_double>mArg.data()->range().second)
+                num_double=mArg.data()->range().second;
+            mArg->setValue(num_todouble);
+            mText->setText(QString::number(num_double,'f',1));
+            mText->setSelection(cursor_pos,1);
+        }
         break;
     }
     case Qt::Key_Minus:
     {
         if(mArg->commitPolicy() == DeviceArg::CommitPolicy::Immediate)
-            mArg->setValue(num_double);
-
+        {
+            switch (cursor_pos) {
+            case 0:
+            {num_double -= 100;}
+                break;
+            case 1:
+            {num_double -= 10;}
+                break;
+            case 2:
+            {num_double--;}
+                break;
+            case 4:
+            {num_double -= 0.1;}
+            default:
+                break;
+            }
+            if(num_double<mArg.data()->range().first)
+                num_double=mArg.data()->range().first;
+            mArg->setValue(num_todouble);
+            mText->setText(QString::number(num_double,'f',1));
+            mText->setSelection(cursor_pos,1);
+        }
         break;
     }
     case Qt::Key_Asterisk:
@@ -60,8 +101,11 @@ void NumDoubleArgEditor::keyPressEvent(QKeyEvent *e)
         else
             cursor_pos++;
         if(mText->text().at(cursor_pos)==QChar('.'))
+        {
             cursor_pos++;
-        mText->setSelection(cursor_pos,1);
+            qDebug()<<cursor_pos;
+        }
+            mText->setSelection(cursor_pos,1);
 
         break;
     }
