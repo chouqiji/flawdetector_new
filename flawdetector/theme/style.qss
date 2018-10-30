@@ -1,4 +1,4 @@
-Component--SimpleInspector>QLabel#value
+QLabel
 {
     selection-background-color : cyan;
     font: 14pt "Microsoft YaHei";

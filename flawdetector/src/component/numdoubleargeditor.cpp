@@ -13,12 +13,21 @@ NumDoubleArgEditor::NumDoubleArgEditor(ArgPointer arg, QWidget *parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     mArg = arg;
-    constexpr int padding = 50;
     auto p = new QBoxLayout{QBoxLayout::LeftToRight, this};
     p->addWidget(mText);
-    mText->setFixedHeight(mText->fontMetrics().height() + padding);
-
     num_double=mText->text().toDouble();
+
+
+
+    num_double=mArg->currentValue();
+    mText->setText(QString::number(num_double));
+    grabKeyboard();
+    mText->setTextInteractionFlags(Qt::TextSelectableByKeyboard);
+    mText->setSelection(cursor_pos,1);
+
+    p->setContentsMargins(0, 0, 0, 0);
+    resize(parent->size());
+
 }
 
 void NumDoubleArgEditor::bind(NumDoubleArgEditor::ArgPointer arg)
@@ -46,13 +55,14 @@ void NumDoubleArgEditor::keyPressEvent(QKeyEvent *e)
     }
     case Qt::Key_Asterisk:
     {
-        if(cursor_pos>mText->text().size())
+        if(cursor_pos>mText->text().size()-2)
             cursor_pos=0;
         else
             cursor_pos++;
         if(mText->text().at(cursor_pos)==QChar('.'))
             cursor_pos++;
         mText->setSelection(cursor_pos,1);
+
         break;
     }
 
