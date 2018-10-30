@@ -7,7 +7,6 @@
 #include <QComboBox>
 #include "devicearg/enumerablearg.h"
 #include "component/enumargeditor.h"
-#include "component/itemwheel.h"
 
 Desktop::Desktop(QWidget *parent)
     : QWidget(parent)
@@ -19,7 +18,11 @@ Desktop::Desktop(QWidget *parent)
     auto pw1 = new Component::SimpleInspector(this);
     auto pw2 = new Component::SimpleInspector(this);
 
-    pw1->bind(p, [p](auto in){return new Component::EnumArgEditor(p, in);});
+    pw1->bind(p, [p](auto in){
+        using namespace Component;
+        return new EnumArgEditor{p, in, defaultConverter,
+                                PopupMode::Relative, 3};
+    });
     pw2->bind(p, nullptr, [](auto in){return in.toString().append("233");});
 
     auto pl = new QBoxLayout(QBoxLayout::TopToBottom, this);

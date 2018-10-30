@@ -11,6 +11,12 @@ int main(int argc, char *argv[])
 //    a.setStyleSheet("QLabel{font: 24px;}");
     a.setStyleSheet(R"(
                     QLabel{font: 18pt;}
+                    .Component--EnumArgEditor{
+                    background: yellow;
+                    }
+                    .Component--EnumArgEditor QLabel{
+                    background: cyan;
+                    }
                     .Component--ItemWheel{
                     background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1,
                     stop:0 rgba(0, 0, 0, 0),
@@ -27,9 +33,6 @@ int main(int argc, char *argv[])
                     border: none;
                     }
                     )");
-//    a.setStyleSheet("Component--ItemWheel{background: rgba(255, 255, 255,127);border:1px solid black;}");
-
-//    a.setStyleSheet("#viewport{border: 1px solid black;}");
 
     Desktop w;
     w.show();

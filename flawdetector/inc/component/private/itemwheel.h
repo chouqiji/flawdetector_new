@@ -24,8 +24,8 @@ signals:
     void currentTextChanged(const QString&);
 
 private:
-    class ImplItemWheel;
-    QScopedPointer<ImplItemWheel> pImpl;
+    class Impl;
+    QScopedPointer<Impl> pImpl;
 };
 
 }
