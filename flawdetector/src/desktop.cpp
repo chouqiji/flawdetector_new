@@ -10,6 +10,7 @@
 #include "component/intargeditor.h"
 #include "devicearg/numericarg.h"
 #include "component/numdoubleargeditor.h"
+#include "component/numericargeditor.h"
 Desktop::Desktop(QWidget *parent)
     : QWidget(parent)
 {
@@ -43,11 +44,14 @@ Desktop::Desktop(QWidget *parent)
 
     auto p_range = GlobalManager::instance()->getNumericArg<double>("range");
     auto pw_range = new Component::SimpleInspector(this);
-    pw_range->bind(p_range,[p_range](auto in_double){return new Component::NumDoubleArgEditor(p_range, in_double);});
+    pw_range->bind(p_range,
+                   [p_range](auto in){return new Component::NumericArgEditor<double>(p_range, 1, in);},
+                   [](auto in){return QString::number(in.toDouble(), 'f', 1);});
     pl->addWidget(pw_range);
     auto psc_range = new QShortcut(Qt::Key_F3,pw_range);
     connect(psc_range,&QShortcut::activated,pw_range,&Component::SimpleInspector::setFocus);
 
+    qDebug()<<QString::number(1,'f',0);
 }
 
 Desktop::~Desktop()
