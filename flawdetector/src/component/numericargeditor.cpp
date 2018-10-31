@@ -76,11 +76,18 @@ public:
 
     void addStep(T step)
     {
+        // NOTE:如果次高位是零时，直接把step移至次高位
+        if(mValue + step < -step / 10)
+            step /= 10;
+
         mValue = std::clamp(mValue + step, mRange.first, mRange.second);
-        // FIXME: 在减去数字时右移光标。
-        if(mValue < step)
-            ;
+
         fillText();
+
+        // NOTE: 操作完数字后，光标一定指向有数字的位置
+        while(!(mText->text().at(mapToStringPos()).isDigit()))
+            mCursorPos -= 1;
+
         setSelection();
     }
 
