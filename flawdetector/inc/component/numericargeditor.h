@@ -1,7 +1,7 @@
 #ifndef COMPONENT_NUMERICARGEDITOR_H
 #define COMPONENT_NUMERICARGEDITOR_H
 
-#include <QWidget>
+#include <QFrame>
 #include <devicearg/editport.h>
 
 namespace Component {
@@ -10,7 +10,7 @@ template <typename T>
 class ImplNumericArgEditor;
 
 template <typename T>
-class NumericArgEditor : public QWidget
+class NumericArgEditor : public QFrame
 {
 public:
     using ArgPointer = QSharedPointer<DeviceArg::NumericEditPort<T>>;

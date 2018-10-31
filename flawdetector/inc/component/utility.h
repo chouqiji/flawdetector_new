@@ -27,8 +27,8 @@ inline T limitDown(const T& in, const T& lower)
     return in < lower ? lower : in;
 }
 
-extern int getCursorPos();
-extern void setCursorPos(int);
+extern double getGlobalStep();
+extern void setGlobalStep(double);
 
 }
 

@@ -21,6 +21,10 @@ QLabel
     stop:0.5 rgba(0, 0, 0, 0),
     stop:1 rgba(0, 0, 0, 100));
 }
+QLabel#NumericEditor{
+    background: yellow;
+}
+
 QWidget{
     border: none;
 }

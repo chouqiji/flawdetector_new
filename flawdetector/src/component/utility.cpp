@@ -2,16 +2,16 @@
 
 namespace Component {
 
-static int cursorPos = 0;
+static double step = 0;
 
-int getCursorPos()
+double getGlobalStep()
 {
-    return cursorPos;
+    return step;
 }
 
-void setCursorPos(int newPos)
+void setGlobalStep(double newStep)
 {
-    cursorPos = newPos;
+    step = newStep;
 }
 
 }

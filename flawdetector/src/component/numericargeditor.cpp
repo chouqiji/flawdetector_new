@@ -3,6 +3,7 @@
 #include <QKeyEvent>
 #include "component/numericargeditor.h"
 #include "component/utility.h"
+#include <QDebug>
 
 namespace Component {
 
@@ -13,6 +14,7 @@ public:
         : mText{new QLabel{ptr}}, mPtr{ptr}
     {
         mText->setTextInteractionFlags(Qt::TextSelectableByKeyboard);
+        mText->setObjectName("NumericEditor");
     }
 
     void calcMaxLen()
@@ -22,13 +24,14 @@ public:
 
     void initCursor()
     {
-        mCursorPos = limitUp(getCursorPos(), mMaxLen - 1);
+        mCursorPos = stepToCursorPos(getGlobalStep());
 
-        if(!(mText->text().at(mapToStringPos()).isDigit()))
-            mCursorPos += 1;
+        while(!(mText->text().at(mapToStringPos()).isDigit()))
+            mCursorPos -= 1;
 
-        if(mCursorPos != getCursorPos())
-            setCursorPos(mCursorPos);
+        auto step = calcStep();
+        if(!qFuzzyCompare(step, getGlobalStep()))
+            setGlobalStep(step);
 
         setSelection();
     }
@@ -37,12 +40,16 @@ public:
     {
         mCursorPos += 1;
 
+        qDebug()<<mCursorPos<<mMaxLen;
+
         if(mCursorPos == mMaxLen)
             mCursorPos = 0;
-        else if(!(mText->text().at(mapToStringPos()).isDigit()))
+        else if(mText->text().at(mapToStringPos()) == '.')
             mCursorPos += 1;
 
-        setCursorPos(mCursorPos);
+        auto step = calcStep();
+        if(!qFuzzyCompare(step, getGlobalStep()))
+            setGlobalStep(step);
 
         setSelection();
     }
@@ -70,6 +77,7 @@ public:
     void addStep(T step)
     {
         mValue = std::clamp(mValue + step, mRange.first, mRange.second);
+        // FIXME: 在减去数字时右移光标。
         if(mValue < step)
             ;
         fillText();
@@ -85,9 +93,22 @@ public:
     std::pair<T, T> mRange;
 
 private:
-    int mapToStringPos() {
+    int mapToStringPos()
+    {
         return limitDown(mMaxLen - 1 - mCursorPos, 0);
     }
+
+    int stepToCursorPos(double step)
+    {
+        auto str = QString::number(step, 'f', mPrecision).rightJustified(mMaxLen, ' ');
+        auto idx = str.indexOf('1');
+
+        if(idx < 0)
+            return 0;
+
+        return mMaxLen - 1 - idx;
+    }
+
     NumericArgEditor<T> *mPtr;
 };
 
@@ -98,7 +119,7 @@ template<> void ImplNumericArgEditor<int>::calcMaxLen()
 
 template<typename T>
 NumericArgEditor<T>::NumericArgEditor(ArgPointer arg, int precision, QWidget *parent)
-    : QWidget{parent}, pImpl{new ImplNumericArgEditor<T>{this}}
+    : QFrame{parent}, pImpl{new ImplNumericArgEditor<T>{this}}
 {
     setAttribute(Qt::WA_DeleteOnClose);
     pImpl->mArg = arg;
@@ -110,6 +131,7 @@ NumericArgEditor<T>::NumericArgEditor(ArgPointer arg, int precision, QWidget *pa
     p->addWidget(pImpl->mText);
 
     p->setContentsMargins(0, 0, 0, 0);
+    p->setSpacing(0);
     resize(parent->size());
 
     pImpl->mValue = pImpl->mArg->currentValue();
