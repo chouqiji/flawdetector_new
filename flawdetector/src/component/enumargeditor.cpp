@@ -40,7 +40,7 @@ public:
     ItemWheel *mPopup;
     QPoint mOffset = QPoint{0, 0};
     QPoint mPos = QPoint{0, 0};
-    PopupPosRef mPopupPosRef;
+    PopupPosRef mPopupPosRef = PopupPosRef::BottomLeft;
     PopupMode mPopupMode = PopupMode::NoPopup;
     decltype(mArg->range()) mRange;
 
