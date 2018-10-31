@@ -6,7 +6,7 @@
 #include <QScrollArea>
 #include <QPropertyAnimation>
 #include <QScrollBar>
-#include <component/common.h>
+#include "component/utility.h"
 
 namespace Component {
 

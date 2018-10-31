@@ -4,6 +4,7 @@
 #include <QBoxLayout>
 #include "component/enumargeditor.h"
 #include "component/private/itemwheel.h"
+#include "component/utility.h"
 
 namespace Component {
 

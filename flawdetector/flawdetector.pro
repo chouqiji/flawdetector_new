@@ -36,7 +36,8 @@ SOURCES += \
     src/component/enumargeditor.cpp \
     src/component/private/itemwheel.cpp \
     src/component/numdoubleargeditor.cpp \
-    src/component/intargeditor.cpp
+    src/component/intargeditor.cpp \
+    src/component/utility.cpp
 
 HEADERS += \
         inc/desktop.h \
@@ -54,7 +55,8 @@ HEADERS += \
     inc/component/common.h \
     inc/component/private/itemwheel.h \
     inc/component/numdoubleargeditor.h \
-    inc/component/intargeditor.h
+    inc/component/intargeditor.h \
+    inc/component/utility.h
 
 QMAKE_CXXFLAGS -= -std=gnu++11 -std=std++11
 QMAKE_CXXFLAGS *= -std=gnu++17
