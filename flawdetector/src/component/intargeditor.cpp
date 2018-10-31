@@ -1,4 +1,4 @@
-#include "component/numericargeditor.h"
+#include "component/intargeditor.h"
 #include <QKeyEvent>
 #include <QtConcurrent/QtConcurrentMap>
 #include <QLabel>
@@ -6,7 +6,7 @@
 #include <QString>
 namespace Component {
 
-NumeArgEditor::NumeArgEditor(ArgPointer arg, QWidget *parent)
+IntArgEditor::IntArgEditor(ArgPointer arg, QWidget *parent)
     : QWidget{parent},
       mText{new QLabel{this}}
 
@@ -30,13 +30,13 @@ NumeArgEditor::NumeArgEditor(ArgPointer arg, QWidget *parent)
 
 }
 
-void NumeArgEditor::bind(NumeArgEditor::ArgPointer arg)
+void IntArgEditor::bind(IntArgEditor::ArgPointer arg)
 {
     mArg = arg;
 
 }
 
-void NumeArgEditor::keyPressEvent(QKeyEvent *e)
+void IntArgEditor::keyPressEvent(QKeyEvent *e)
 {
     int modifier;
     if(e->key() == Qt::Key_Plus)
@@ -83,7 +83,7 @@ void NumeArgEditor::keyPressEvent(QKeyEvent *e)
         break;
     }
 }
-int NumeArgEditor::calculateStep(int cursor_step)
+int IntArgEditor::calculateStep(int cursor_step)
 {
     QString max_len(maxLen, '0');
     QString update_val = max_len.replace(cursor_step,1,'1');

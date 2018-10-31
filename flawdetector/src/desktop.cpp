@@ -7,7 +7,7 @@
 #include <QComboBox>
 #include "devicearg/enumerablearg.h"
 #include "component/enumargeditor.h"
-#include "component/numericargeditor.h"
+#include "component/intargeditor.h"
 #include "devicearg/numericarg.h"
 #include "component/numdoubleargeditor.h"
 Desktop::Desktop(QWidget *parent)
@@ -36,7 +36,7 @@ Desktop::Desktop(QWidget *parent)
 
     auto p_gain = GlobalManager::instance()->getNumericArg<int>("gain");
     auto pw_gain = new Component::SimpleInspector(this);
-    pw_gain->bind(p_gain, [p_gain](auto in){return new Component::NumeArgEditor(p_gain, in);});
+    pw_gain->bind(p_gain, [p_gain](auto in){return new Component::IntArgEditor(p_gain, in);});
     pl->addWidget(pw_gain);
     auto psc_gain = new QShortcut(Qt::Key_F2,pw_gain);
     connect(psc_gain,&QShortcut::activated,pw_gain,&Component::SimpleInspector::setFocus);
